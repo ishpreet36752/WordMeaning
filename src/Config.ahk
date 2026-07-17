@@ -22,5 +22,6 @@ class Config {
 
     ; --- Behavior ---
     static MaxDefinitionLen := 300     ; truncate long definitions in popup
+    static PopupWrapWidth := 58        ; wrap popup text to this many chars/line (bounds width)
     static CacheMaxEntries := 200      ; in-memory lookup cache cap (per session, never persisted)
 }
