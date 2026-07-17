@@ -1,0 +1,46 @@
+name: Bug report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting a bug! Please fill in the details below.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, and what went wrong?
+      placeholder: I double-clicked a word in Chrome and no popup appeared.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: A definition popup at the cursor.
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Where did it happen?
+      description: Which app were you selecting text in?
+      placeholder: Chrome / Microsoft Edge PDF viewer / Word / Notepad
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message (if any)
+      description: If an AutoHotkey error dialog appeared, paste the full text here.
+      render: text
+  - type: input
+    id: ahk-version
+    attributes:
+      label: AutoHotkey version
+      placeholder: "2.0.18"
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 23H2
