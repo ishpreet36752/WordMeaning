@@ -18,6 +18,7 @@ class Config {
     static ClipWaitSec := 0.3          ; how long to wait for Ctrl+C to fill clipboard
     static HttpTimeoutMs := 5000       ; resolve/connect/send/receive timeout
     static TooltipTimeoutMs := 6000    ; popup auto-hide
+    static FocusPollMs := 250          ; active-window poll interval (window-switch dismiss)
 
     ; --- Behavior ---
     static MaxDefinitionLen := 300     ; truncate long definitions in popup

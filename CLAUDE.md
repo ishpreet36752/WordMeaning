@@ -14,11 +14,17 @@ System-wide word-definition popup for Windows. Select a single word in any app (
 
 - `src/Main.ahk` — entry point, wiring, tray menu, enable/disable state. Includes the other modules.
 - `src/Config.ahk` — ALL tunables (timeouts, regex, API base, caps). Never hardcode values elsewhere.
-- `src/SelectionWatcher.ahk` — global mouse hook. Detects drag-select or double-click, captures selection via clipboard-preserving Ctrl+C probe.
+- `src/SelectionWatcher.ahk` — global mouse hook. Detects drag-select or double-click, captures selection via clipboard-preserving Ctrl+C probe. Also fires an onPress callback so any click dismisses a stale popup.
+- `src/FocusWatcher.ahk` — polls the active window id on a timer; fires onChange when the foreground window changes (Alt+Tab, app switch) so the popup is dismissed.
 - `src/Dictionary.ahk` — dictionaryapi.dev client. Input validation, HTTPS fetch, minimal JSON field extraction, session cache.
 - `src/Popup.ahk` — tooltip display/hide.
 
 Flow: SelectionWatcher → Main.OnSelection (word filter) → Dictionary.Lookup → Popup.Show.
+Dismiss: SelectionWatcher.onPress (click) and FocusWatcher.onChange (window switch) → Popup.Hide; plus the 6s auto-hide timer.
+
+### AHK v2 gotcha (caused two load crashes — do not repeat)
+
+Identifiers are **case-insensitive**. A `static` field must never share a name with a method (e.g. `_onPress` vs `_OnPress()`), or init fails with "Property is read-only". For OS/timer callbacks prefer a `.Bind(Class)` method + `SetTimer` (proven here) over `CallbackCreate`/`DllCall`, which hit `this`-binding ambiguity ("Invalid callback function").
 
 ## Invariants (do not break)
 
@@ -37,11 +43,17 @@ Flow: SelectionWatcher → Main.OnSelection (word filter) → Dictionary.Lookup 
 
 ## Testing
 
-Automated: `tests/SmokeTest.ahk` covers Dictionary validation/fetch/parse/cache (needs internet):
+Automated:
+- `tests/LoadTest.ahk` — includes every module so all class static-initializers run; catches load-time faults like the case-insensitive name collision above. No network needed.
+- `tests/SmokeTest.ahk` — Dictionary validation/fetch/parse/cache (needs internet).
 
 ```powershell
-& "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe" /ErrorStdOut tests\SmokeTest.ahk
+$ahk = "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe"
+& $ahk /ErrorStdOut tests\LoadTest.ahk    # expect: LOAD OK
+& $ahk /ErrorStdOut tests\SmokeTest.ahk   # expect: ALL PASS
 ```
+
+Note: `LoadTest` only runs static initializers, not `Start()` methods. To catch errors inside a watcher's `Start()` (e.g. bad callback setup), run `src/Main.ahk` with stderr captured — clean means the process stays alive AND stderr is empty (a lingering error dialog is itself an `AutoHotkey64.exe` process, so a bare pid check is not proof of a clean load).
 
 Hook/UI code has no automated coverage. Manual test matrix after any change:
 1. Chrome webpage — double-click a word → popup shows meaning, no pronunciation.

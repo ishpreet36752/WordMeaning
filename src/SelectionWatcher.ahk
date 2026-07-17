@@ -4,7 +4,8 @@
 
 class SelectionWatcher {
     static _onSelect := ""
-    static _onPress := ""
+    static _pressCb := ""     ; NOTE: must not be "_onPress" — AHK v2 names are
+                              ; case-insensitive and would collide with _OnPress().
     static _pressX := 0
     static _pressY := 0
     static _lastClickTick := 0
@@ -14,7 +15,7 @@ class SelectionWatcher {
     ;                        used to dismiss a stale popup (clicking anywhere hides it).
     static Start(onSelect, onPress := "") {
         SelectionWatcher._onSelect := onSelect
-        SelectionWatcher._onPress := onPress
+        SelectionWatcher._pressCb := onPress
         HotIf
         Hotkey("~LButton", SelectionWatcher._OnPress.Bind(SelectionWatcher))
         Hotkey("~LButton Up", SelectionWatcher._OnRelease.Bind(SelectionWatcher))
@@ -24,8 +25,8 @@ class SelectionWatcher {
         MouseGetPos(&x, &y)
         SelectionWatcher._pressX := x
         SelectionWatcher._pressY := y
-        if (SelectionWatcher._onPress != "")
-            SelectionWatcher._onPress.Call()
+        if (SelectionWatcher._pressCb != "")
+            SelectionWatcher._pressCb.Call()
     }
 
     static _OnRelease(*) {
