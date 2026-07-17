@@ -7,11 +7,17 @@
 #Include Dictionary.ahk
 #Include Popup.ahk
 #Include SelectionWatcher.ahk
+#Include FocusWatcher.ahk
 
 enabled := true
 
 InitTray()
-SelectionWatcher.Start(OnSelection)
+SelectionWatcher.Start(OnSelection, DismissPopup)   ; onPress -> hide (click anywhere dismisses)
+FocusWatcher.Start(DismissPopup)                    ; window/app switch dismisses
+
+DismissPopup() {
+    Popup.Hide()
+}
 
 OnSelection(text) {
     global enabled

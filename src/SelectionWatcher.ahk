@@ -4,13 +4,17 @@
 
 class SelectionWatcher {
     static _onSelect := ""
+    static _onPress := ""
     static _pressX := 0
     static _pressY := 0
     static _lastClickTick := 0
 
-    ; callback: func(text) — called with captured selection text (may be multi-word; caller filters)
-    static Start(callback) {
-        SelectionWatcher._onSelect := callback
+    ; onSelect: func(text) — captured selection text (may be multi-word; caller filters).
+    ; onPress:  func()     — fired on every left-button press, before selection resolves;
+    ;                        used to dismiss a stale popup (clicking anywhere hides it).
+    static Start(onSelect, onPress := "") {
+        SelectionWatcher._onSelect := onSelect
+        SelectionWatcher._onPress := onPress
         HotIf
         Hotkey("~LButton", SelectionWatcher._OnPress.Bind(SelectionWatcher))
         Hotkey("~LButton Up", SelectionWatcher._OnRelease.Bind(SelectionWatcher))
@@ -20,6 +24,8 @@ class SelectionWatcher {
         MouseGetPos(&x, &y)
         SelectionWatcher._pressX := x
         SelectionWatcher._pressY := y
+        if (SelectionWatcher._onPress != "")
+            SelectionWatcher._onPress.Call()
     }
 
     static _OnRelease(*) {
