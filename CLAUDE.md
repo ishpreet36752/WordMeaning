@@ -16,7 +16,9 @@ System-wide word-definition popup for Windows. Select a single word in any app (
 .\build.ps1
 ```
 
-Produces `dist/WordMeaning.exe` (single file, all modules bundled, tray icon embedded). Runs on any Windows PC with **no AutoHotkey install and no source files present** — copy it anywhere as a portable backup. Needs the Ahk2Exe compiler at `%LOCALAPPDATA%\Programs\AutoHotkey\Compiler\Ahk2Exe.exe` (install via `UX\install-ahk2exe.ahk` or unzip a release from github.com/AutoHotkey/Ahk2Exe). `dist/` is git-ignored — it is a build artifact, regenerate with `build.ps1`.
+Produces `dist/WordMeaning.exe` (single file, all modules bundled, tray icon embedded). Runs on any Windows PC with **no AutoHotkey install and no source files present** — copy it anywhere as a portable backup. Needs the Ahk2Exe compiler at `%LOCALAPPDATA%\Programs\AutoHotkey\Compiler\Ahk2Exe.exe` (install via `UX\install-ahk2exe.ahk` or unzip a release from github.com/AutoHotkey/Ahk2Exe).
+
+If [Inno Setup](https://jrsoftware.org/isdl.php) is installed (`%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`), `build.ps1` also compiles `installer/WordMeaning.iss` into `dist/WordMeaning-Setup.exe` — a per-user installer (no admin) with Start-menu + optional desktop shortcut, an optional "Start with Windows" checkbox (writes the same HKCU Run key as the tray toggle), and a clean uninstaller. Distribution is manual: attach `WordMeaning.exe` and `WordMeaning-Setup.exe` to a GitHub Release; nothing is auto-published. `dist/` is git-ignored — it is a build artifact, regenerate with `build.ps1`.
 
 The tray/app icon is `assets/wordmeaning.ico` (committed source asset; regenerate with `scripts/make-icon.ps1` if present). `build.ps1` embeds it via Ahk2Exe `/icon`; the uncompiled dev run loads it via `TraySetIcon` (`Main.SetTrayIcon`, guarded by `A_IsCompiled`).
 

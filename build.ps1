@@ -37,5 +37,24 @@ $proc = Start-Process -FilePath $ahk2exe -ArgumentList $args -Wait -PassThru -No
 if ($proc.ExitCode -ne 0) { throw "Ahk2Exe failed (exit $($proc.ExitCode))." }
 if (-not (Test-Path $out)) { throw "Compile reported success but $out is missing." }
 
-Write-Host ("Done. {0}  ({1:N0} bytes)" -f $out, (Get-Item $out).Length)
-Write-Host "Double-click it to run, or copy it anywhere as a portable backup."
+Write-Host ("Portable exe: {0}  ({1:N0} bytes)" -f $out, (Get-Item $out).Length)
+
+# --- Optional: build the Setup.exe installer if Inno Setup is available ---
+$isccCandidates = @(
+    "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
+    "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+    "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+)
+$iscc = $isccCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($iscc) {
+    Write-Host "Building installer with Inno Setup..."
+    & $iscc "$root\installer\WordMeaning.iss" | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed (exit $LASTEXITCODE)." }
+    $setup = Join-Path $dist 'WordMeaning-Setup.exe'
+    Write-Host ("Installer:    {0}  ({1:N0} bytes)" -f $setup, (Get-Item $setup).Length)
+} else {
+    Write-Host "Inno Setup not found - skipped installer. (Install from https://jrsoftware.org/isdl.php to also build WordMeaning-Setup.exe.)"
+}
+
+Write-Host ""
+Write-Host "Done. Double-click WordMeaning.exe to run, or copy it anywhere as a portable backup."

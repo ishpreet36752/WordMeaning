@@ -30,3 +30,15 @@ jobs:
             Write-Error "LoadTest failed (exit=$LASTEXITCODE)"
             exit 1
           }
+
+      - name: Run deterministic tests (WrapTest, StartupTest)
+        shell: pwsh
+        run: |
+          foreach ($t in 'WrapTest','StartupTest') {
+            $out = & "$env:AHK" /ErrorStdOut "tests\$t.ahk" 2>&1 | Out-String
+            Write-Host "== $t =="; Write-Host $out
+            if ($LASTEXITCODE -ne 0 -or ($out -notmatch "ALL PASS")) {
+              Write-Error "$t failed (exit=$LASTEXITCODE)"
+              exit 1
+            }
+          }
