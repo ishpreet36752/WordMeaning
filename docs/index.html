@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WordMeaning — instant word definitions anywhere on Windows</title>
+<title>WordMeaning: instant word definitions anywhere on Windows</title>
 <meta name="description" content="Select any word in any Windows app and its definition pops up at your cursor. Free, private, no account. For Windows 10 and 11.">
 <meta property="og:title" content="WordMeaning">
-<meta property="og:description" content="Select a word anywhere on Windows — its meaning appears at your cursor.">
+<meta property="og:description" content="Select a word anywhere on Windows. Its meaning appears at your cursor.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20x='6'%20y='6'%20width='88'%20height='88'%20rx='20'%20fill='%232563eb'/%3E%3Ctext%20x='50'%20y='54'%20text-anchor='middle'%20dominant-baseline='central'%20font-family='Segoe%20UI,Arial,sans-serif'%20font-weight='800'%20font-size='60'%20fill='white'%3EW%3C/text%3E%3C/svg%3E">
 <style>
@@ -15,7 +15,7 @@
     --paper: #ffffff;
     --ink: #0e1526;
     --muted: #566179;
-    --faint: #7c8aa6;
+    --faint: #5e6b85;
     --line: #dbe2ee;
     --accent: #2563eb;
     --accent-strong: #1d4ed8;
@@ -46,7 +46,7 @@
     }
   }
   :root[data-theme="light"] {
-    --bg: #eef1f7; --paper: #ffffff; --ink: #0e1526; --muted: #566179; --faint: #7c8aa6;
+    --bg: #eef1f7; --paper: #ffffff; --ink: #0e1526; --muted: #566179; --faint: #5e6b85;
     --line: #dbe2ee; --accent: #2563eb; --accent-strong: #1d4ed8; --accent-ink: #ffffff;
     --sel: rgba(37, 99, 235, 0.20);
     --shadow: 0 1px 2px rgba(14, 21, 38, .06), 0 12px 32px -12px rgba(14, 21, 38, .18);
@@ -133,10 +133,6 @@
   .hero { padding: 64px 0 40px; }
   .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; }
   @media (max-width: 900px) { .hero-grid { grid-template-columns: 1fr; gap: 40px; } }
-  .eyebrow {
-    font-family: var(--mono); font-size: .74rem; font-weight: 600; letter-spacing: .16em;
-    text-transform: uppercase; color: var(--accent); margin: 0 0 16px;
-  }
   h1 {
     font-family: var(--serif); font-weight: 700; letter-spacing: -0.015em;
     font-size: clamp(2.2rem, 5.2vw, 3.5rem); line-height: 1.06; margin: 0 0 20px;
@@ -205,52 +201,55 @@
   }
   .sec-head p { color: var(--muted); font-size: 1.08rem; margin: 0; }
 
-  /* --- Features --- */
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  @media (max-width: 860px) { .features { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
-  .feat {
-    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 24px; box-shadow: var(--shadow);
+  /* --- Capabilities as dictionary entries.
+     The product's own grammar (headword / part of speech / definition), so the
+     structure states something true instead of decorating. No boxes, no icons. --- */
+  .gloss { display: grid; grid-template-columns: 1fr 1fr; gap: 36px 52px; }
+  @media (max-width: 720px) { .gloss { grid-template-columns: 1fr; gap: 28px; } }
+  .entry { break-inside: avoid; }
+  .entry .word {
+    font-family: var(--serif); font-weight: 700; font-size: 1.24rem;
+    letter-spacing: -0.01em; color: var(--ink);
   }
-  .feat .ic {
-    width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
-    background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); margin-bottom: 16px;
+  .entry .pos {
+    font-family: var(--mono); font-size: .74rem; color: var(--accent);
+    margin-left: 9px; white-space: nowrap;
   }
-  .feat .ic svg { width: 21px; height: 21px; }
-  .feat h3 { font-size: 1.06rem; margin: 0 0 6px; letter-spacing: -0.01em; }
-  .feat p { color: var(--muted); font-size: .96rem; margin: 0; }
+  .entry .def { color: var(--muted); font-size: 1rem; margin: 6px 0 0; max-width: 44ch; }
+  /* The widest claim leads at a larger size, so the set never reads as a uniform grid. */
+  .entry.lead { grid-column: 1 / -1; }
+  .entry.lead .word { font-size: clamp(1.9rem, 4vw, 2.6rem); }
+  .entry.lead .pos { font-size: .84rem; margin-left: 12px; }
+  .entry.lead .def { font-size: 1.12rem; max-width: 48ch; margin-top: 8px; }
 
   /* --- Steps --- */
-  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: step; }
-  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 18px; } }
-  .step { position: relative; padding: 26px 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); box-shadow: var(--shadow); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px; }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; gap: 30px; } }
   .step .n {
-    font-family: var(--mono); font-size: .8rem; font-weight: 700; color: var(--accent);
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line);
-    background: color-mix(in srgb, var(--accent) 10%, transparent); margin-bottom: 14px;
+    display: block; font-family: var(--serif); font-weight: 700; font-size: 2.7rem;
+    line-height: 1; color: var(--accent); margin-bottom: 12px;
+    font-variant-numeric: lining-nums tabular-nums;
   }
-  .step h3 { font-size: 1.12rem; margin: 0 0 6px; font-family: var(--serif); }
-  .step p { color: var(--muted); margin: 0; font-size: .97rem; }
+  .step h3 { font-family: var(--serif); font-size: 1.16rem; margin: 0 0 6px; }
+  .step p { color: var(--muted); margin: 0; font-size: 1rem; max-width: 34ch; }
 
   /* --- Download --- */
   .dl-band { background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-  @media (max-width: 760px) { .dl-grid { grid-template-columns: 1fr; } }
-  .dl-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; background: var(--bg); position: relative; }
-  .dl-card.reco { border-color: var(--accent); }
-  .dl-tag {
-    position: absolute; top: -11px; left: 24px; font-family: var(--mono); font-size: .68rem; letter-spacing: .12em;
-    text-transform: uppercase; font-weight: 700; color: var(--accent-ink); background: var(--accent);
-    padding: 3px 10px; border-radius: 999px;
+  /* One panel divided, rather than two cards competing for the same decision. */
+  .dl-split {
+    display: grid; grid-template-columns: 1fr 1px 1fr;
+    border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); overflow: hidden;
   }
-  .dl-card h3 { margin: 4px 0 6px; font-size: 1.2rem; letter-spacing: -0.01em; }
-  .dl-card .sz { font-family: var(--mono); font-size: .8rem; color: var(--faint); }
-  .dl-card ul { list-style: none; padding: 0; margin: 16px 0 22px; display: grid; gap: 9px; }
-  .dl-card li { display: flex; gap: 10px; align-items: flex-start; font-size: .95rem; color: var(--muted); }
-  .dl-card li svg { width: 17px; height: 17px; color: var(--accent); flex: none; margin-top: 3px; }
-  .dl-card .btn { width: 100%; justify-content: center; }
+  .dl-rule { background: var(--line); }
+  @media (max-width: 760px) { .dl-split { grid-template-columns: 1fr; } .dl-rule { height: 1px; } }
+  .dl-opt { padding: 30px; display: flex; flex-direction: column; }
+  .dl-opt .reco { font-family: var(--mono); font-size: .73rem; font-weight: 700; color: var(--accent); }
+  .dl-opt h3 { margin: 6px 0 4px; font-family: var(--serif); font-size: 1.32rem; letter-spacing: -0.01em; }
+  .dl-opt .sz { font-family: var(--mono); font-size: .8rem; color: var(--faint); }
+  .dl-opt ul { list-style: none; padding: 0; margin: 18px 0 24px; display: grid; gap: 10px; }
+  .dl-opt li { display: flex; gap: 10px; align-items: flex-start; font-size: .96rem; color: var(--muted); }
+  .dl-opt li svg { width: 17px; height: 17px; color: var(--accent); flex: none; margin-top: 3px; }
+  .dl-opt .btn { margin-top: auto; justify-content: center; }
   .note {
     margin: 26px auto 0; max-width: 720px; text-align: center; font-size: .9rem; color: var(--faint);
     background: color-mix(in srgb, var(--accent) 7%, transparent); border: 1px solid var(--line);
@@ -300,9 +299,8 @@
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">For Windows 10 &amp; 11</p>
           <h1>Look up any word without leaving the page.</h1>
-          <p class="lede">Select a word anywhere in Windows — your browser, a PDF, an email — and its meaning appears right at your cursor. No copy&#8209;paste, no new tabs.</p>
+          <p class="lede">Select a word in your browser, a PDF, or a document. Its meaning appears right at your cursor, then gets out of the way.</p>
           <div class="cta-row">
             <a class="btn btn-primary" href="downloads/WordMeaning-Setup.exe" download>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
@@ -311,6 +309,7 @@
             <a class="btn btn-ghost" href="#download">Portable version</a>
           </div>
           <p class="meta">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Windows 10 &amp; 11</span>
             <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Free &amp; open-source</span>
             <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>No account, no ads</span>
             <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Nothing stored</span>
@@ -334,40 +333,33 @@
     <section id="features">
       <div class="wrap">
         <div class="sec-head reveal">
-          <p class="eyebrow">Why it's nice</p>
-          <h2>Small tool, exactly one job — done well.</h2>
-          <p>No dashboards, no settings to wrangle. It sits in your tray and waits for you to <span class="mark">select a word</span>.</p>
+          <h2>What it actually does</h2>
+          <p>It sits in your tray and waits for you to <span class="mark">select a word</span>.</p>
         </div>
-        <div class="features">
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l7 16 2-6 6-2z"/></svg></div>
-            <h3>Works in every app</h3>
-            <p>Browsers, PDF readers, Word, chat — anywhere you can select text.</p>
+        <div class="gloss">
+          <div class="entry lead reveal">
+            <span class="word">everywhere</span><span class="pos">adverb</span>
+            <p class="def">In any app where you can select text: browsers, PDF readers, Word, chat windows, comment boxes.</p>
           </div>
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/></svg></div>
-            <h3>Meaning, not pronunciation</h3>
-            <p>Just the definition and part of speech. No phonetics or audio clutter.</p>
+          <div class="entry reveal">
+            <span class="word">definition</span><span class="pos">noun</span>
+            <p class="def">The meaning and the part of speech. Phonetics and audio are deliberately left out.</p>
           </div>
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg></div>
-            <h3>Your clipboard is safe</h3>
-            <p>Whatever you copied stays put. Lookups never overwrite it.</p>
+          <div class="entry reveal">
+            <span class="word">clipboard</span><span class="pos">noun</span>
+            <p class="def">Yours, untouched. Whatever you copied is restored after every lookup.</p>
           </div>
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-            <h3>Nothing is stored</h3>
-            <p>No logging, no history, no disk writes. Lookups live in memory only.</p>
+          <div class="entry reveal">
+            <span class="word">nothing</span><span class="pos">pronoun</span>
+            <p class="def">What gets written to disk. Lookups live in memory for the session, then vanish.</p>
           </div>
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
-            <h3>Feather-light</h3>
-            <p>A tiny tray app. Start it once and forget it's running.</p>
+          <div class="entry reveal">
+            <span class="word">lightweight</span><span class="pos">adjective</span>
+            <p class="def">A small tray program. Start it once and forget that it is running.</p>
           </div>
-          <div class="feat reveal">
-            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-8-8 8.6-8.6a5 5 0 0 1 8 6z"/><circle cx="16" cy="8" r="1.3" fill="currentColor" stroke="none"/></svg></div>
-            <h3>Free forever</h3>
-            <p>Powered by the open dictionaryapi.dev. No key, no subscription.</p>
+          <div class="entry reveal">
+            <span class="word">free</span><span class="pos">adjective</span>
+            <p class="def">No key and no subscription. Definitions come from the open dictionaryapi.dev.</p>
           </div>
         </div>
       </div>
@@ -377,25 +369,24 @@
     <section id="how">
       <div class="wrap">
         <div class="sec-head reveal">
-          <p class="eyebrow">Three steps</p>
-          <h2>Select. Read. Carry on.</h2>
-          <p>That's the whole interaction — there isn't a step four.</p>
+          <h2>The whole interaction</h2>
+          <p>From an unfamiliar word to its meaning, without losing your place.</p>
         </div>
         <div class="steps">
           <div class="step reveal">
             <span class="n">1</span>
             <h3>Select a word</h3>
-            <p>Double-click it, or drag to highlight — in any app.</p>
+            <p>Double-click it, or drag to highlight it, in any app.</p>
           </div>
           <div class="step reveal">
             <span class="n">2</span>
             <h3>Read the definition</h3>
-            <p>A popup appears at your cursor in an instant.</p>
+            <p>A popup appears at your cursor within a moment.</p>
           </div>
           <div class="step reveal">
             <span class="n">3</span>
             <h3>Carry on</h3>
-            <p>Click away, switch windows, or wait — it fades on its own.</p>
+            <p>Click away, switch windows, or simply wait. It fades on its own.</p>
           </div>
         </div>
       </div>
@@ -405,30 +396,30 @@
     <section id="download" class="dl-band">
       <div class="wrap">
         <div class="sec-head reveal" style="margin-bottom:34px">
-          <p class="eyebrow">Get it</p>
           <h2>Download WordMeaning</h2>
-          <p>Both are the same app. Pick the installer for a guided setup, or the portable file to just run it.</p>
+          <p>Both are the same app. Take the installer for a guided setup, or the portable file to just run it.</p>
         </div>
-        <div class="dl-grid">
-          <div class="dl-card reco reveal">
-            <span class="dl-tag">Recommended</span>
+        <div class="dl-split reveal">
+          <div class="dl-opt">
+            <span class="reco">Recommended</span>
             <h3>Installer</h3>
             <span class="sz">WordMeaning-Setup.exe &middot; 2.9 MB</span>
             <ul>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Guided wizard with a Start-menu shortcut</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Optional “Start with Windows” &amp; desktop icon</li>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Clean uninstall &middot; no admin rights needed</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Optional “Start with Windows” and desktop icon</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Clean uninstall, with no admin rights needed</li>
             </ul>
             <a class="btn btn-primary" href="downloads/WordMeaning-Setup.exe" download>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
               Download installer
             </a>
           </div>
-          <div class="dl-card reveal">
+          <div class="dl-rule" aria-hidden="true"></div>
+          <div class="dl-opt">
             <h3>Portable</h3>
             <span class="sz">WordMeaning.exe &middot; 1.6 MB</span>
             <ul>
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>One file — no installation at all</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>One file, with no installation at all</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Copy it to a USB stick or another PC</li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Turn on auto-start from the tray menu</li>
             </ul>
@@ -438,7 +429,7 @@
             </a>
           </div>
         </div>
-        <p class="note">First launch may show a Windows <b>SmartScreen</b> prompt because the app isn't code-signed yet — click <b>More info → Run anyway</b>. The full source is on GitHub, so you can read exactly what it does.</p>
+        <p class="note">First launch may show a Windows <b>SmartScreen</b> prompt, because the app is not code-signed yet. Click <b>More info</b>, then <b>Run anyway</b>. The full source is on GitHub, so you can read exactly what it does.</p>
       </div>
     </section>
   </main>
