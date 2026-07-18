@@ -2,3 +2,8 @@ Thumbs.db
 Desktop.ini
 *.bak
 *.tmp
+
+# Build output (produced by build.ps1; recreate with .\build.ps1)
+/dist/
+# Ahk2Exe download staging
+/.staging/

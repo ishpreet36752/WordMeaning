@@ -8,7 +8,17 @@ System-wide word-definition popup for Windows. Select a single word in any app (
 .\run.ps1
 ```
 
-(`run.ps1` finds AutoHotkey v2 in user-scope `%LOCALAPPDATA%\Programs\AutoHotkey` or machine-scope `Program Files`.) Runs in the system tray. Tray menu: Enabled (toggle), Exit.
+(`run.ps1` finds AutoHotkey v2 in user-scope `%LOCALAPPDATA%\Programs\AutoHotkey` or machine-scope `Program Files`.) Runs in the system tray. Tray menu: Enabled (toggle), Start with Windows (toggle), Exit.
+
+## Build a standalone .exe
+
+```powershell
+.\build.ps1
+```
+
+Produces `dist/WordMeaning.exe` (single file, all modules bundled, tray icon embedded). Runs on any Windows PC with **no AutoHotkey install and no source files present** — copy it anywhere as a portable backup. Needs the Ahk2Exe compiler at `%LOCALAPPDATA%\Programs\AutoHotkey\Compiler\Ahk2Exe.exe` (install via `UX\install-ahk2exe.ahk` or unzip a release from github.com/AutoHotkey/Ahk2Exe). `dist/` is git-ignored — it is a build artifact, regenerate with `build.ps1`.
+
+The tray/app icon is `assets/wordmeaning.ico` (committed source asset; regenerate with `scripts/make-icon.ps1` if present). `build.ps1` embeds it via Ahk2Exe `/icon`; the uncompiled dev run loads it via `TraySetIcon` (`Main.SetTrayIcon`, guarded by `A_IsCompiled`).
 
 ## Architecture (modular — one responsibility per file)
 
@@ -18,6 +28,7 @@ System-wide word-definition popup for Windows. Select a single word in any app (
 - `src/FocusWatcher.ahk` — polls the active window id on a timer; fires onChange when the foreground window changes (Alt+Tab, app switch) so the popup is dismissed.
 - `src/Dictionary.ahk` — dictionaryapi.dev client. Input validation, HTTPS fetch, minimal JSON field extraction, session cache.
 - `src/Popup.ahk` — tooltip display/hide.
+- `src/Startup.ahk` — optional "run at login" toggle via the per-user `HKCU\...\Run` key. HKCU only (no admin, no machine-wide change); stores only the launch command, never any looked-up data.
 
 Flow: SelectionWatcher → Main.OnSelection (word filter) → Dictionary.Lookup → Popup.Show.
 Dismiss: SelectionWatcher.onPress (click) and FocusWatcher.onChange (window switch) → Popup.Hide; plus the 6s auto-hide timer.
@@ -46,11 +57,15 @@ Identifiers are **case-insensitive**. A `static` field must never share a name w
 Automated:
 - `tests/LoadTest.ahk` — includes every module so all class static-initializers run; catches load-time faults like the case-insensitive name collision above. No network needed.
 - `tests/SmokeTest.ahk` — Dictionary validation/fetch/parse/cache (needs internet).
+- `tests/WrapTest.ahk` — deterministic Popup word-wrapping checks. No network.
+- `tests/StartupTest.ahk` — exercises the HKCU Run-key auto-start toggle end to end; leaves the registry clean afterward. No network.
 
 ```powershell
 $ahk = "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe"
-& $ahk /ErrorStdOut tests\LoadTest.ahk    # expect: LOAD OK
-& $ahk /ErrorStdOut tests\SmokeTest.ahk   # expect: ALL PASS
+& $ahk /ErrorStdOut tests\LoadTest.ahk     # expect: LOAD OK
+& $ahk /ErrorStdOut tests\SmokeTest.ahk    # expect: ALL PASS
+& $ahk /ErrorStdOut tests\WrapTest.ahk     # expect: ALL PASS
+& $ahk /ErrorStdOut tests\StartupTest.ahk  # expect: ALL PASS
 ```
 
 Note: `LoadTest` only runs static initializers, not `Start()` methods. To catch errors inside a watcher's `Start()` (e.g. bad callback setup), run `src/Main.ahk` with stderr captured — clean means the process stays alive AND stderr is empty (a lingering error dialog is itself an `AutoHotkey64.exe` process, so a bare pid check is not proof of a clean load).

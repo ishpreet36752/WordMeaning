@@ -2,6 +2,12 @@
 #Requires AutoHotkey v2.0
 
 class Config {
+    ; --- App identity ---
+    static AppName := "WordMeaning"
+    static IconRelPath := "..\assets\wordmeaning.ico"   ; from src\ (dev run); ignored when compiled
+    ; Per-user auto-start on login. HKCU only — no admin, no machine-wide change.
+    static StartupRegKey := "HKCU\Software\Microsoft\Windows\CurrentVersion\Run"
+
     ; --- Dictionary API (HTTPS only; host is pinned, word is path-encoded) ---
     static ApiBase := "https://api.dictionaryapi.dev/api/v2/entries/en/"
 

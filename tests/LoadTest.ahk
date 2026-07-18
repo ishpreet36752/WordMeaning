@@ -9,6 +9,7 @@
 #Include ..\src\Popup.ahk
 #Include ..\src\SelectionWatcher.ahk
 #Include ..\src\FocusWatcher.ahk
+#Include ..\src\Startup.ahk
 
 FileAppend("LOAD OK`n", "*")
 ExitApp(0)

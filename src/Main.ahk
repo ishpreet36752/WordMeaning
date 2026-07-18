@@ -8,9 +8,11 @@
 #Include Popup.ahk
 #Include SelectionWatcher.ahk
 #Include FocusWatcher.ahk
+#Include Startup.ahk
 
 enabled := true
 
+SetTrayIcon()
 InitTray()
 SelectionWatcher.Start(OnSelection, DismissPopup)   ; onPress -> hide (click anywhere dismisses)
 FocusWatcher.Start(DismissPopup)                    ; window/app switch dismisses
@@ -36,12 +38,33 @@ OnSelection(text) {
     }
 }
 
+; Compiled builds carry the icon embedded (Ahk2Exe /icon) and the tray uses it
+; automatically. When run as a raw .ahk during development, load it from assets.
+SetTrayIcon() {
+    if A_IsCompiled
+        return
+    iconPath := A_ScriptDir "\" Config.IconRelPath
+    if FileExist(iconPath)
+        TraySetIcon(iconPath)
+}
+
 InitTray() {
     A_TrayMenu.Delete()
     A_TrayMenu.Add("Enabled", ToggleEnabled)
     A_TrayMenu.Check("Enabled")
+    A_TrayMenu.Add("Start with Windows", ToggleStartup)
+    if Startup.IsEnabled()
+        A_TrayMenu.Check("Start with Windows")
+    A_TrayMenu.Add()                              ; separator
     A_TrayMenu.Add("Exit", (*) => ExitApp())
-    A_IconTip := "WordMeaning — select a word to see its meaning"
+    A_IconTip := Config.AppName " — select a word to see its meaning"
+}
+
+ToggleStartup(*) {
+    if Startup.Toggle()
+        A_TrayMenu.Check("Start with Windows")
+    else
+        A_TrayMenu.Uncheck("Start with Windows")
 }
 
 ToggleEnabled(*) {
