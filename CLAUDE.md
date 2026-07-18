@@ -18,7 +18,25 @@ System-wide word-definition popup for Windows. Select a single word in any app (
 
 Produces `dist/WordMeaning.exe` (single file, all modules bundled, tray icon embedded). Runs on any Windows PC with **no AutoHotkey install and no source files present** — copy it anywhere as a portable backup. Needs the Ahk2Exe compiler at `%LOCALAPPDATA%\Programs\AutoHotkey\Compiler\Ahk2Exe.exe` (install via `UX\install-ahk2exe.ahk` or unzip a release from github.com/AutoHotkey/Ahk2Exe).
 
-If [Inno Setup](https://jrsoftware.org/isdl.php) is installed (`%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`), `build.ps1` also compiles `installer/WordMeaning.iss` into `dist/WordMeaning-Setup.exe` — a per-user installer (no admin) with Start-menu + optional desktop shortcut, an optional "Start with Windows" checkbox (writes the same HKCU Run key as the tray toggle), and a clean uninstaller. Distribution is manual: attach `WordMeaning.exe` and `WordMeaning-Setup.exe` to a GitHub Release; nothing is auto-published. `dist/` is git-ignored — it is a build artifact, regenerate with `build.ps1`.
+If [Inno Setup](https://jrsoftware.org/isdl.php) is installed (`%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`), `build.ps1` also compiles `installer/WordMeaning.iss` into `dist/WordMeaning-Setup.exe` — a per-user installer (no admin) with Start-menu + optional desktop shortcut, an optional "Start with Windows" checkbox (writes the same HKCU Run key as the tray toggle), and a clean uninstaller. `dist/` is git-ignored — it is a build artifact, regenerate with `build.ps1`.
+
+## Website / distribution
+
+The download site is `docs/index.html`, published by GitHub Pages from `main` + `/docs` at
+**https://ishpreet36752.github.io/WordMeaning/**. There is no GitHub Release; the site *is* the
+distribution channel.
+
+Pages can only serve files committed to the repo, so `docs/downloads/` holds committed copies of
+both binaries (this is why those binaries are in git while `dist/` is ignored). `build.ps1` refreshes
+those copies automatically as its last step — **commit and push `docs/downloads/` or the site keeps
+serving the previous build.**
+
+The landing page is a single self-contained file: inline CSS/SVG/JS, no external requests, no
+webfonts, no analytics. Its hero demo is driven by real `window.getSelection()` and deliberately
+mirrors the app's behavior — `Config.WordPattern` verbatim, the 6s `TooltipTimeoutMs` auto-hide,
+mousedown-hides/mouseup-resolves ordering, and total silence on a multi-word selection (because
+`Main.ahk` suppresses the `"not a single word"` error). **If you change those behaviors in `src/`,
+update the demo too** or the page starts teaching a gesture the program doesn't have.
 
 The tray/app icon is `assets/wordmeaning.ico` (committed source asset; regenerate with `scripts/make-icon.ps1` if present). `build.ps1` embeds it via Ahk2Exe `/icon`; the uncompiled dev run loads it via `TraySetIcon` (`Main.SetTrayIcon`, guarded by `A_IsCompiled`).
 

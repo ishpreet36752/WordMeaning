@@ -46,27 +46,20 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 
 ## Download & install
 
-**Requirements:** Windows 10 or 11, and an internet connection (for the dictionary API). **No AutoHotkey install needed** for the downloads below — everything is bundled.
+### → [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/)
 
-Head to the **[Releases page](https://github.com/ishpreet36752/WordMeaning/releases)** and pick one:
+Both downloads live on the site, and you can try the actual interaction there before installing anything.
 
-### Option A — Installer (recommended)
+**Requirements:** Windows 10 or 11, and an internet connection (for the dictionary API). **No AutoHotkey install needed** — everything is bundled into the download.
 
-1. Download **`WordMeaning-Setup.exe`**.
-2. Run it. The wizard lets you tick:
-   - **Start with Windows** — launch automatically every time you log in.
-   - **Desktop shortcut**.
-   It also adds a Start-menu entry and an entry in *Add or remove programs* (clean uninstall anytime).
-3. WordMeaning starts and a tray icon (a blue **W**) appears near the clock.
+| | |
+|---|---|
+| **[Installer](https://ishpreet36752.github.io/WordMeaning/downloads/WordMeaning-Setup.exe)** (recommended) | Guided setup. Start-menu shortcut, optional desktop icon, optional *Start with Windows*, and a clean uninstall from *Add or remove programs*. Per-user: **no administrator rights**. |
+| **[Portable](https://ishpreet36752.github.io/WordMeaning/downloads/WordMeaning.exe)** | One self-contained file. Double-click to run; copy it to a USB stick or another PC. Nothing is written outside the app unless you turn on *Start with Windows* from the tray menu. |
 
-> The installer is per-user and needs **no administrator rights**.
+Either way, a tray icon (a blue **W**) appears near the clock and WordMeaning starts watching for word selections.
 
-### Option B — Portable (no install)
-
-1. Download **`WordMeaning.exe`**.
-2. Double-click it. That's it — the tray icon appears and it starts watching for word selections.
-
-Portable means one self-contained file: copy it to a USB stick or another PC and it just runs. Nothing is written outside the app until you turn on *Start with Windows* from the tray menu.
+> **Windows will warn you on first launch.** SmartScreen shows an "unrecognised app" dialog for any program whose publisher hasn't paid for a code-signing certificate, and this one hasn't. Click **More info**, then **Run anyway**. If you'd rather check first, the whole program is about five hundred lines of AutoHotkey in [`src/`](src/).
 
 ## Run from source (developers)
 

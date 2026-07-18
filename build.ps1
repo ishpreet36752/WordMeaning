@@ -56,5 +56,19 @@ if ($iscc) {
     Write-Host "Inno Setup not found - skipped installer. (Install from https://jrsoftware.org/isdl.php to also build WordMeaning-Setup.exe.)"
 }
 
+# --- Sync the copies the website serves ---
+# docs/ is published by GitHub Pages, and Pages can only serve files committed to
+# the repo, so the site has its own copies. Refresh them here: forgetting to means
+# the download page quietly keeps handing out the previous build.
+$siteDir = Join-Path $root 'docs\downloads'
+if (Test-Path (Join-Path $root 'docs')) {
+    if (-not (Test-Path $siteDir)) { New-Item -ItemType Directory -Force -Path $siteDir | Out-Null }
+    Copy-Item $out (Join-Path $siteDir 'WordMeaning.exe') -Force
+    $setup = Join-Path $dist 'WordMeaning-Setup.exe'
+    if (Test-Path $setup) { Copy-Item $setup (Join-Path $siteDir 'WordMeaning-Setup.exe') -Force }
+    Write-Host "Site downloads refreshed in docs\downloads."
+    Write-Host "  Commit and push them to update what the website serves."
+}
+
 Write-Host ""
 Write-Host "Done. Double-click WordMeaning.exe to run, or copy it anywhere as a portable backup."
