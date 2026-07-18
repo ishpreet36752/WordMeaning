@@ -15,10 +15,31 @@ jobs:
 
       - name: Download AutoHotkey v2 (portable)
         shell: pwsh
+        env:
+          # Pinned so CI stays deterministic. To bump: raise the version, then take
+          # the matching hash from the release notes at
+          # https://github.com/AutoHotkey/AutoHotkey/releases
+          AHK_VERSION: "2.0.26"
+          AHK_SHA256: "43522AA3122A57784AC5DB30ABF85C2244475C36ACD7796E2C993355F9E926AE"
         run: |
-          Invoke-WebRequest -Uri "https://www.autohotkey.com/download/ahk-v2.zip" -OutFile ahk.zip
+          # Not autohotkey.com/download: that host is behind a Cloudflare challenge
+          # which serves CI an HTML interstitial instead of the zip. The official
+          # GitHub release asset is the same build and is not challenged.
+          $ver = $env:AHK_VERSION
+          $url = "https://github.com/AutoHotkey/AutoHotkey/releases/download/v${ver}/AutoHotkey_${ver}.zip"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile ahk.zip
+
+          $hash = (Get-FileHash ahk.zip -Algorithm SHA256).Hash
+          if ($hash -ne $env:AHK_SHA256) {
+            Write-Error "AutoHotkey checksum mismatch. Expected $($env:AHK_SHA256), got $hash"
+            exit 1
+          }
+          Write-Host "Checksum verified."
+
           Expand-Archive -Path ahk.zip -DestinationPath ahk -Force
           $exe = Get-ChildItem -Path ahk -Recurse -Filter "AutoHotkey64.exe" | Select-Object -First 1
+          if (-not $exe) { Write-Error "AutoHotkey64.exe not found in the archive."; exit 1 }
           "AHK=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Run LoadTest
