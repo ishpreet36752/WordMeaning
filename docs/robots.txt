@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ishpreet36752.github.io/WordMeaning/sitemap.xml
