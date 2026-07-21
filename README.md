@@ -31,12 +31,14 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 ## Features
 
 - **Works everywhere** — any app where you can select text (drag or double-click).
-- **Instant popup at the cursor** — word, part of speech, and definition. No pronunciation clutter.
+- **Instant popup at the cursor** — word, part of speech, up to two meanings, and an example sentence when there is one. No pronunciation clutter.
+- **Readable meanings** — the dictionary's first sense is often the archaic one, so the popup also shows the most useful sense it can find.
+- **Web fallback** — if no dictionary has the word, press **Ctrl+Shift+D** while the popup is up to search for it in your browser. The program never opens the browser on its own.
 - **Dismisses naturally** — click anywhere, switch windows (Alt+Tab), or wait 6 seconds.
 - **Clipboard-safe** — whatever you had copied stays exactly as it was.
 - **Private** — nothing is logged or saved to disk; lookups are cached in memory for the session only.
 - **Lightweight** — a single AutoHotkey v2 script, lives in the system tray.
-- **Free** — uses the free [dictionaryapi.dev](https://dictionaryapi.dev/) API, no account or API key.
+- **Free** — [FreeDictionaryAPI.com](https://freedictionaryapi.com/) (Wiktionary data) with an [api.datamuse.com](https://api.datamuse.com/) fallback. No account, no API key.
 
 ## Demo
 
@@ -96,6 +98,7 @@ Prefer to run the raw script or hack on it?
    - **click anywhere** (including on a different browser tab),
    - **switch to another window** (Alt+Tab or click another app), or
    - **wait 6 seconds**.
+4. If the word isn't in the dictionaries, the popup says so and offers **Ctrl+Shift+D** — press it while the popup is up to search the web for that word. That shortcut only exists while a popup is showing, so it never shadows the same keys in other programs.
 
 Selecting a **whole sentence or multiple words does nothing** — this is by design; WordMeaning looks up single words only.
 
@@ -123,6 +126,9 @@ All tunables live in [`src/Config.ahk`](src/Config.ahk). Common ones:
 | `MaxDefinitionLen` | `300` | Truncate long definitions to this many characters |
 | `FocusPollMs` | `250` | How often to check for a window switch |
 | `HttpTimeoutMs` | `5000` | Network timeout for the dictionary API |
+| `MaxExampleLen` | `140` | Longest example sentence shown (longer ones are dropped) |
+| `WebSearchUrl` | Google `define+` | Where Ctrl+Shift+D sends the word (e.g. swap in Wiktionary) |
+| `WebSearchHotkey` | `^+d` | The web-search shortcut, live only while a popup is showing |
 
 Edit the file and restart WordMeaning to apply changes.
 
@@ -140,15 +146,16 @@ WordMeaning is a small, modular AutoHotkey v2 app — one responsibility per fil
 | `src/Popup.ahk` | Show/hide the tooltip |
 | `src/Startup.ahk` | Optional "run at login" toggle (per-user registry key; no admin) |
 
-**Flow:** you select a word → it's captured via a clipboard-safe `Ctrl+C` probe → validated as a single word → looked up on dictionaryapi.dev → shown at your cursor.
+**Flow:** you select a word → it's captured via a clipboard-safe `Ctrl+C` probe → validated as a single word → looked up on freedictionaryapi.com (falling back to api.datamuse.com when that host has no entry) → the most useful sense is picked → shown at your cursor.
 
 ## Privacy & security
 
 - **No telemetry, no logging, no disk writes.** Looked-up words live only in an in-memory cache that is cleared when you quit.
 - **Your clipboard is always restored** after each lookup, even if the lookup fails.
-- **HTTPS only**, to a single pinned host. The selected word is URL-encoded and length-capped before any request.
+- **HTTPS only**, to two pinned hosts (the fallback is only contacted when the first has no entry). The selected word is URL-encoded and length-capped before any request.
 - **Single-word only** — WordMeaning never sends sentences or arbitrary selected text anywhere.
 - Only the word you select is sent to the dictionary API, and only to fetch its definition.
+- **Your browser is only opened by you.** Ctrl+Shift+D works only while a popup is showing, and only then does the word reach a search engine (and your browser history).
 
 ## Troubleshooting
 
@@ -156,7 +163,7 @@ WordMeaning is a small, modular AutoHotkey v2 app — one responsibility per fil
 Install it: `winget install AutoHotkey.AutoHotkey`. WordMeaning needs **v2**, not v1.
 
 **A word gives "no definition found"**
-The API is English-only and doesn't have every word (names, slang, very technical terms). Non-English words won't resolve.
+The dictionaries are English-only and don't have every word (names, brand names, very new slang). Non-English words won't resolve. Press **Ctrl+Shift+D** while the popup is up to search the web for that word instead.
 
 **"offline / network error"**
 Check your internet connection; the dictionary API needs to be reachable.
@@ -172,7 +179,7 @@ Please [open a bug report](https://github.com/ishpreet36752/WordMeaning/issues/n
 
 ## Limitations
 
-- **English words only** (dictionaryapi.dev).
+- **English words only** (Wiktionary/Datamuse data).
 - **Single words only** — no phrases or idioms.
 - **Scanned/image PDFs** aren't supported (no text to select).
 - Password fields and other non-copyable UI text are silently skipped.
@@ -186,3 +193,5 @@ Good first contributions: docs, a demo GIF, extra troubleshooting entries, small
 ## License
 
 [MIT](LICENSE) — free to use, modify, and share.
+
+Definitions come from [Wiktionary](https://en.wiktionary.org/) via [FreeDictionaryAPI.com](https://freedictionaryapi.com/) and are licensed [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/); fallback definitions come from [api.datamuse.com](https://api.datamuse.com/). The same credit is in the app under tray → **About**.

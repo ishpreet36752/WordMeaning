@@ -34,9 +34,10 @@ serving the previous build.**
 The landing page is a single self-contained file: inline CSS/SVG/JS, no external requests, no
 webfonts, no analytics. Its hero demo is driven by real `window.getSelection()` and deliberately
 mirrors the app's behavior — `Config.WordPattern` verbatim, the 6s `TooltipTimeoutMs` auto-hide,
-mousedown-hides/mouseup-resolves ordering, and total silence on a multi-word selection (because
-`Main.ahk` suppresses the `"not a single word"` error). **If you change those behaviors in `src/`,
-update the demo too** or the page starts teaching a gesture the program doesn't have.
+mousedown-hides/mouseup-resolves ordering, total silence on a multi-word selection (because
+`Main.ahk` suppresses the `"not a single word"` error), the numbered two-sense layout, the quoted
+example line, and the `Config.WebSearchHint` line on a miss. **If you change those behaviors in
+`src/`, update the demo too** or the page starts teaching a gesture the program doesn't have.
 
 ### SEO / social
 
@@ -64,12 +65,17 @@ The tray/app icon is `assets/wordmeaning.ico` (committed source asset; regenerat
 - `src/Config.ahk` — ALL tunables (timeouts, regex, API base, caps). Never hardcode values elsewhere.
 - `src/SelectionWatcher.ahk` — global mouse hook. Detects drag-select or double-click, captures selection via clipboard-preserving Ctrl+C probe. Also fires an onPress callback so any click dismisses a stale popup.
 - `src/FocusWatcher.ahk` — polls the active window id on a timer; fires onChange when the foreground window changes (Alt+Tab, app switch) so the popup is dismissed.
-- `src/Dictionary.ahk` — dictionaryapi.dev client. Input validation, HTTPS fetch, minimal JSON field extraction, session cache.
-- `src/Popup.ahk` — tooltip display/hide.
+- `src/Dictionary.ahk` — freedictionaryapi.com client (Wiktionary data, no key) with an api.datamuse.com fallback. Input validation, HTTPS fetch, targeted field extraction, sense selection, session cache.
+- `src/Popup.ahk` — tooltip display/hide, plus `IsVisible()` (gates the web-search hotkey).
 - `src/Startup.ahk` — optional "run at login" toggle via the per-user `HKCU\...\Run` key. HKCU only (no admin, no machine-wide change); stores only the launch command, never any looked-up data.
 
 Flow: SelectionWatcher → Main.OnSelection (word filter) → Dictionary.Lookup → Popup.Show.
 Dismiss: SelectionWatcher.onPress (click) and FocusWatcher.onChange (window switch) → Popup.Hide; plus the 6s auto-hide timer.
+Web fallback: `Config.WebSearchHotkey` is registered under `HotIf Popup.IsVisible()`, so it exists only while a popup is on screen and cannot shadow the same combination in the app being read.
+
+### Sense selection (why the popup is not just "the first definition")
+
+Wiktionary orders senses historically, so sense 1 is often useless (*juxtaposition: "the nearness of objects with little or no delimiter"*), while the best-scoring sense can be a deep subsense (*run: "to fuse, to shape, to mould"*). `Dictionary._Choose` therefore shows **the source's first sense AND the highest-scoring one**, both from the same part of speech. `_Score`: `+2` usable example, `-3` circular and unillustrated, `-1` domain-tagged, `-4` pointer sense ("Abbreviation of…"). `_Clean` strips grammatical tags (`(countable)`) but keeps subject tags (`(computing)`); `_IsLabel` drops Wiktionary grouping headings ("Terms relating to animals."); `_CleanExample` rejects literary citations and sub-4-word fragments rather than truncating them. Regression cases for all of this live in `tests/SmokeTest.ahk` — change the scoring and run it.
 
 ### AHK v2 gotcha (caused two load crashes — do not repeat)
 
@@ -80,7 +86,10 @@ Identifiers are **case-insensitive**. A `static` field must never share a name w
 - **Clipboard is always restored** after the Ctrl+C probe, even on failure (`SelectionWatcher._CaptureSelection`).
 - **Single-word only**: `Config.WordPattern` gates both the watcher callback and `Dictionary.Lookup`. Multi-word selections are silently ignored.
 - **No pronunciation**: phonetic/audio fields from the API are deliberately never parsed or shown.
-- **HTTPS only**, host pinned in `Config.ApiBase`; the word is URL-path-encoded and length-capped (`MaxWordLen`) before any request.
+- **HTTPS only**, hosts pinned in `Config.ApiBase` and `Config.ApiFallbackBase`; the word is URL-encoded and length-capped (`MaxWordLen`) before any request. The fallback fires only when the primary has no entry.
+- **The browser is never opened by the program itself** — only by the user pressing `Config.WebSearchHotkey` while a popup is up. Opening it hands the word to a search engine and writes it into browser history, which is exactly what the rest of the app avoids.
+- **No API keys**: both sources are keyless, so nothing has to be shipped in the binary or written to disk.
+- **Attribution**: the primary source is CC BY-SA 4.0. Credit stays in tray → About (`Config.AttributionText`) and in the site footer.
 - **No persistence**: looked-up words live only in the in-memory session cache (`CacheMaxEntries` cap). Nothing is written to disk or logged.
 - **Deterministic behavior**: same word → same cached result within a session; all timing values come from `Config`.
 
@@ -115,3 +124,5 @@ Hook/UI code has no automated coverage. Manual test matrix after any change:
 4. Copy something first, do a lookup, paste — original clipboard must be intact.
 5. Select a full sentence — no popup, no error.
 6. Disconnect network, select a word — "offline / network error" popup, no crash.
+7. Select a word the dictionaries don't have (e.g. a product name) — popup shows the miss plus the hotkey hint; press Ctrl+Shift+D → browser opens a search for that word, popup closes.
+8. Press Ctrl+Shift+D with no popup on screen — nothing happens (the app must not shadow that combination in other programs).

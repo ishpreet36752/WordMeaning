@@ -209,7 +209,10 @@
   .pop.on { opacity: 1; }
   .pop .p-head { font-family: var(--chrome-font); font-size: 12px; color: #1a1a1a; margin-bottom: 3px; }
   .pop .p-head b { color: #000; }
-  .pop .p-def { font-size: .93rem; line-height: 1.45; color: #141414; }
+  .pop .p-def { font-size: .93rem; line-height: 1.45; color: #141414; white-space: pre-line; }
+  .pop .p-ex { margin-top: 4px; font-size: .86rem; line-height: 1.4; color: #3d3d3d; font-style: italic; }
+  .pop .p-ex:empty { display: none; }
+  .pop .p-ex.hint { font-family: var(--chrome-font); font-size: 12px; font-style: normal; color: #2b2b2b; }
   .demo-hint {
     margin: 9px 0 0; font-family: var(--chrome-font); font-size: 12px; color: #2b2b2b;
   }
@@ -343,6 +346,7 @@
                 <div class="pop" id="pop" role="status" aria-live="polite">
                   <div class="p-head"><b id="popWord">serendipity</b> <span id="popPos">(noun)</span></div>
                   <div class="p-def" id="popDef">The occurrence of events by chance in a happy or beneficial way.</div>
+                  <div class="p-ex" id="popEx">"We met by pure serendipity on a delayed train."</div>
                 </div>
               </div>
             </div>
@@ -352,7 +356,7 @@
       </div>
 
       <div class="hero-after">
-        <p>WordMeaning sits in your system tray. Select a single word in any program and its definition appears at your cursor, then disappears after six seconds. It shows the meaning and the part of speech, and nothing else.</p>
+        <p>WordMeaning sits in your system tray. Select a single word in any program and its definition appears at your cursor, then disappears after six seconds. It shows the part of speech, up to two meanings, and an example sentence when there is one. No pronunciation, no audio.</p>
         <div class="cta-row">
           <a class="btn btn-lg" href="downloads/WordMeaning-Setup.exe" download>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
@@ -379,7 +383,7 @@
         <div class="beat">
           <div class="n">2</div>
           <h3>The definition appears</h3>
-          <p>A small popup opens at your cursor with the word, its part of speech, and one line of meaning. No pronunciation, no audio.</p>
+          <p>A small popup opens at your cursor with the word, its part of speech, its meaning, and an example sentence when the dictionary has a plain one. If the word isn't found, press Ctrl+Shift+D to search the web for it instead.</p>
         </div>
         <div class="beat">
           <div class="n">3</div>
@@ -407,7 +411,7 @@
         </div>
         <div class="fact">
           <h3>It doesn't send anything but the single word</h3>
-          <p>One request over HTTPS to one pinned host, api.dictionaryapi.dev. No account, no identifier, no analytics, no telemetry.</p>
+          <p>One request over HTTPS to one pinned host, freedictionaryapi.com; if that host has no entry for the word, one more to api.datamuse.com. No account, no identifier, no analytics, no telemetry. Your browser is only ever opened by you pressing Ctrl+Shift+D.</p>
         </div>
         <div class="fact">
           <h3>It doesn't read sentences</h3>
@@ -467,6 +471,7 @@
 <footer class="foot">
   <div class="wrap foot-row">
     <span>WordMeaning · <a href="https://github.com/ishpreet36752/WordMeaning/blob/main/LICENSE">MIT licence</a></span>
+    <span class="dev">Definitions from <a href="https://en.wiktionary.org/">Wiktionary</a> via <a href="https://freedictionaryapi.com/">FreeDictionaryAPI.com</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></span>
     <a href="https://github.com/ishpreet36752/WordMeaning">Source</a>
     <a href="https://github.com/ishpreet36752/WordMeaning/issues">Report a bug</a>
   </div>
@@ -491,21 +496,28 @@
   var popW = document.getElementById("popWord");
   var popP = document.getElementById("popPos");
   var popD = document.getElementById("popDef");
+  var popE = document.getElementById("popEx");
   if (!doc || !pop) return;
 
   /* Mirrors src/Config.ahk exactly. */
   var WORD_RE   = /^[A-Za-z][A-Za-z'\-]{0,31}$/;   /* Config.WordPattern  */
   var MAX_LEN   = 32;                              /* Config.MaxWordLen   */
   var HIDE_MS   = 6000;                            /* Config.TooltipTimeoutMs */
+  var WEB_HINT  = "Ctrl+Shift+D - search the web";  /* Config.WebSearchHint */
 
-  /* Stands in for the dictionaryapi.dev response. Anything not here reports
-     "no definition found", which is a real state in Dictionary.ahk. */
+  /* Stands in for the dictionary response. Entries are [pos, meaning, second
+     meaning, example] — the last two are optional, exactly as Dictionary.ahk
+     returns them. Anything not here reports "no definition found", which is a
+     real state in Dictionary.ahk. */
   var DICT = {
-    obsolescence: ["noun", "The process of becoming out of date and no longer used."],
+    obsolescence: ["noun", "The process of becoming out of date and no longer used.", "",
+                   "Planned obsolescence keeps the parts bin small and the profits large."],
     laconic:      ["adjective", "Using very few words; concise to the point of seeming brusque."],
     ephemeral:    ["adjective", "Lasting for a very short time."],
-    serendipity:  ["noun", "The occurrence of events by chance in a happy or beneficial way."],
-    catalogue:    ["noun", "A complete list of items, typically in a systematic order."],
+    serendipity:  ["noun", "The occurrence of events by chance in a happy or beneficial way.", "",
+                   "We met by pure serendipity on a delayed train."],
+    catalogue:    ["noun", "A complete list of items, typically in a systematic order.",
+                   "A publication listing goods for sale.", ""],
     compiler:     ["noun", "A person who produces a list or book by assembling material."],
     annotated:    ["verb", "Added notes to a text or diagram giving explanation or comment."],
     marginal:     ["adjective", "Written in the margin of a page."],
@@ -539,11 +551,14 @@
     clearTimeout(hideTimer);
   }
 
-  /* Places the popup at the selection, the way the program places it at the cursor. */
-  function showAt(rect, word, pos, def) {
+  /* Places the popup at the selection, the way the program places it at the cursor.
+     Two meanings are numbered and a lone one is not, as in Main.OnSelection. */
+  function showAt(rect, word, pos, def, alt, extra, isHint) {
     popW.textContent = word;
     popP.textContent = pos ? "(" + pos + ")" : "";
-    popD.textContent = def;
+    popD.textContent = alt ? "1. " + def + "\n2. " + alt : def;
+    popE.textContent = extra ? (isHint ? extra : '"' + extra + '"') : "";
+    popE.className = isHint ? "p-ex hint" : "p-ex";
     pop.classList.add("on");
 
     if (!narrow.matches) {
@@ -565,8 +580,9 @@
     if (word.length > MAX_LEN || !WORD_RE.test(word)) return;
 
     var hit = DICT[word.toLowerCase()];
-    if (hit) showAt(rect, word, hit[0], hit[1]);
-    else     showAt(rect, word, "", "no definition found");
+    /* A miss offers the browser but never opens it by itself, as in Main.OnSelection. */
+    if (hit) showAt(rect, word, hit[0], hit[1], hit[2] || "", hit[3] || "", false);
+    else     showAt(rect, word, "", "no definition found", "", WEB_HINT, true);
   }
 
   function selectionRect(sel) {
@@ -671,7 +687,8 @@
       first.classList.add("static-sel");
       var r = first.getBoundingClientRect();
       var hit = DICT[first.textContent.toLowerCase()];
-      showAt(r, first.textContent, hit ? hit[0] : "", hit ? hit[1] : "no definition found");
+      showAt(r, first.textContent, hit ? hit[0] : "", hit ? hit[1] : "no definition found",
+             hit ? (hit[2] || "") : "", hit ? (hit[3] || "") : WEB_HINT, !hit);
       clearTimeout(hideTimer);                      /* stays put; nothing to chase */
     }
   } else {

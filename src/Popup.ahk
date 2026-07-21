@@ -7,6 +7,7 @@ class Popup {
     ; Single bound instance so SetTimer resets/deletes the SAME timer each call —
     ; a fresh BoundFunc per call would leak stale timers that hide newer popups early.
     static _hideFn := ""
+    static _showing := false   ; gates the web-search hotkey (live only while a popup is up)
 
     static Show(text) {
         if (Popup._hideFn == "")
@@ -14,6 +15,7 @@ class Popup {
         text := Popup._Wrap(text, Config.PopupWrapWidth)
         MouseGetPos(&x, &y)
         ToolTip(text, x + 12, y + 16)
+        Popup._showing := true
         SetTimer(Popup._hideFn, 0)                          ; cancel pending hide
         SetTimer(Popup._hideFn, -Config.TooltipTimeoutMs)   ; run once
     }
@@ -24,6 +26,11 @@ class Popup {
 
     static _Hide(*) {
         ToolTip()
+        Popup._showing := false
+    }
+
+    static IsVisible() {
+        return Popup._showing
     }
 
     ; Wrap each existing line to at most `width` characters, breaking at spaces.
