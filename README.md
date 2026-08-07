@@ -12,9 +12,9 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 
 ## Demo
 
-<video src="https://ishpreet36752.github.io/WordMeaning/assets/demo.mp4" controls muted loop width="480"></video>
+<video src="https://github.com/user-attachments/assets/23baf418-fee1-4151-8b93-dbb418632a53" controls muted loop width="520"></video>
 
-20 seconds: select a word, the meaning appears at the cursor. Not playing? ▶ **[Open the video](https://ishpreet36752.github.io/WordMeaning/assets/demo.mp4)** — or try the real interaction in your browser at [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/).
+20 seconds: select a word, the meaning appears at the cursor. Prefer it in a tab? ▶ **[Open the video](https://ishpreet36752.github.io/WordMeaning/assets/demo.mp4)** — or try the real interaction in your browser at [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/).
 
 ---
 
