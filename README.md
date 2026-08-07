@@ -10,12 +10,17 @@
 
 Reading an article, a PDF, or a document and hit a word you don't know? Instead of copying it and pasting into Google, just **double-click the word** — WordMeaning shows the definition in a small popup at your cursor. Works in your browser, PDF readers, Word, and almost any Windows app.
 
+## Demo
+
+<video src="https://ishpreet36752.github.io/WordMeaning/assets/demo.mp4" controls muted loop width="480"></video>
+
+20 seconds: select a word, the meaning appears at the cursor. Not playing? ▶ **[Open the video](https://ishpreet36752.github.io/WordMeaning/assets/demo.mp4)** — or try the real interaction in your browser at [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/).
+
 ---
 
 ## Table of contents
 
 - [Features](#features)
-- [Demo](#demo)
 - [Download & install](#download--install)
 - [Run from source (developers)](#run-from-source-developers)
 - [Usage](#usage)
@@ -39,16 +44,6 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 - **Private** — nothing is logged or saved to disk; lookups are cached in memory for the session only.
 - **Lightweight** — a single AutoHotkey v2 script, lives in the system tray.
 - **Free** — [FreeDictionaryAPI.com](https://freedictionaryapi.com/) (Wiktionary data) with an [api.datamuse.com](https://api.datamuse.com/) fallback. No account, no API key.
-
-## Demo
-
-A 20-second walkthrough — select a word, the meaning appears at the cursor.
-
-<video src="https://github.com/ishpreet36752/WordMeaning/raw/main/docs/assets/demo.mp4" controls muted playsinline width="480"></video>
-
-▶ **[Watch the demo](docs/assets/demo.mp4)** (20s) — or try the real interaction in your browser at [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/).
-
-Double-click **serendipity** → a tooltip appears: _serendipity (noun) — the occurrence of events by chance in a happy or beneficial way._
 
 ## Download & install
 
