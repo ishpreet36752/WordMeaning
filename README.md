@@ -42,9 +42,13 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 
 ## Demo
 
-> _Add a short screen recording or GIF here (e.g. `docs/demo.gif`) once you have one._
->
-> Double-click **serendipity** → a tooltip appears: _serendipity (noun) — the occurrence of events by chance in a happy or beneficial way._
+A 20-second walkthrough — select a word, the meaning appears at the cursor.
+
+<video src="https://github.com/ishpreet36752/WordMeaning/raw/main/docs/assets/demo.mp4" controls muted playsinline width="480"></video>
+
+▶ **[Watch the demo](docs/assets/demo.mp4)** (20s) — or try the real interaction in your browser at [ishpreet36752.github.io/WordMeaning](https://ishpreet36752.github.io/WordMeaning/).
+
+Double-click **serendipity** → a tooltip appears: _serendipity (noun) — the occurrence of events by chance in a happy or beneficial way._
 
 ## Download & install
 
@@ -188,7 +192,7 @@ Please [open a bug report](https://github.com/ishpreet36752/WordMeaning/issues/n
 
 Contributions are very welcome! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for setup, tests, and conventions, and please follow our **[Code of Conduct](CODE_OF_CONDUCT.md)**.
 
-Good first contributions: docs, a demo GIF, extra troubleshooting entries, small quality-of-life options in `Config.ahk`.
+Good first contributions: docs, extra troubleshooting entries, small quality-of-life options in `Config.ahk`.
 
 ## License
 
