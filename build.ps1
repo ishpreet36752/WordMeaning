@@ -56,19 +56,22 @@ if ($iscc) {
     Write-Host "Inno Setup not found - skipped installer. (Install from https://jrsoftware.org/isdl.php to also build WordMeaning-Setup.exe.)"
 }
 
-# --- Sync the copies the website serves ---
-# docs/ is published by GitHub Pages, and Pages can only serve files committed to
-# the repo, so the site has its own copies. Refresh them here: forgetting to means
-# the download page quietly keeps handing out the previous build.
+# --- Sync the mirror copies under docs/ ---
+# The website's Download buttons point at the GitHub Release, not at these files,
+# because only the Release gives a download count. These stay as a committed
+# mirror/fallback, so keep them current with the binaries just built.
 $siteDir = Join-Path $root 'docs\downloads'
 if (Test-Path (Join-Path $root 'docs')) {
     if (-not (Test-Path $siteDir)) { New-Item -ItemType Directory -Force -Path $siteDir | Out-Null }
     Copy-Item $out (Join-Path $siteDir 'WordMeaning.exe') -Force
     $setup = Join-Path $dist 'WordMeaning-Setup.exe'
     if (Test-Path $setup) { Copy-Item $setup (Join-Path $siteDir 'WordMeaning-Setup.exe') -Force }
-    Write-Host "Site downloads refreshed in docs\downloads."
-    Write-Host "  Commit and push them to update what the website serves."
+    Write-Host "Mirror copies refreshed in docs\downloads (commit them to keep the fallback current)."
 }
 
 Write-Host ""
 Write-Host "Done. Double-click WordMeaning.exe to run, or copy it anywhere as a portable backup."
+Write-Host ""
+Write-Host "To publish this build to the website's Download buttons, upload it to the Release:"
+Write-Host "  gh release upload v1.0.0 dist\WordMeaning-Setup.exe dist\WordMeaning.exe --clobber"
+Write-Host "  (or cut a new tag with: gh release create vX.Y.Z dist\WordMeaning-Setup.exe dist\WordMeaning.exe)"

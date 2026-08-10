@@ -23,16 +23,46 @@ If [Inno Setup](https://jrsoftware.org/isdl.php) is installed (`%LOCALAPPDATA%\P
 ## Website / distribution
 
 The download site is `docs/index.html`, published by GitHub Pages from `main` + `/docs` at
-**https://ishpreet36752.github.io/WordMeaning/**. There is no GitHub Release; the site *is* the
-distribution channel.
+**https://ishpreet36752.github.io/WordMeaning/**. The site is the shop window; the **GitHub Release
+is the actual download path** — every Download button and the JSON-LD `downloadUrl`/`installUrl`
+point at `github.com/ishpreet36752/WordMeaning/releases/latest/download/<asset>`.
 
-Pages can only serve files committed to the repo, so `docs/downloads/` holds committed copies of
-both binaries (this is why those binaries are in git while `dist/` is ignored). `build.ps1` refreshes
-those copies automatically as its last step — **commit and push `docs/downloads/` or the site keeps
-serving the previous build.**
+That indirection exists for one reason: **GitHub counts Release-asset downloads and Pages counts
+nothing.** Serving the binaries from `docs/downloads/` is unmeasurable. Keep every download link on
+the release URLs or the counter silently undercounts.
 
-The landing page is a single self-contained file: inline CSS/SVG/JS, no external requests, no
-webfonts, no analytics. Its hero demo is driven by real `window.getSelection()` and deliberately
+`docs/downloads/` still holds committed copies of both binaries, now only as a mirror/fallback (this
+is why those binaries are in git while `dist/` is ignored). `build.ps1` refreshes them as its last
+step and prints the `gh release upload` command needed to publish a build to the buttons.
+
+Read the counters with `.\scripts\download-stats.ps1` (needs `gh auth login`). It prints per-asset
+and total downloads, plus the repo's 14-day traffic figures. **`gh release upload --clobber` deletes
+and recreates the asset, which resets that asset's counter to zero** — cut a new tag per version
+instead of clobbering, unless you are fixing a broken upload.
+
+### Visitor counting
+
+Pages exposes no logs, so a visit can only be counted by making a request to something that keeps
+one. The page does that exactly once: a **GoatCounter no-JS pixel** just after `</footer>` in
+`docs/index.html`, hitting `https://wordmeaning.goatcounter.com/count`. Stats live at
+https://wordmeaning.goatcounter.com (login required; there is no API key anywhere in the repo).
+
+Why the pixel and not the `<script src="//gc.zgo.at/count.js">` tag GoatCounter hands you on signup:
+the scripted version collects screen size and links a session, and it puts third-party JavaScript on
+a page that otherwise runs only its own. The pixel records a page view and referrer, sets no cookie,
+and executes nothing. Cost of that choice: **the `p=` path is hardcoded**, fine for a one-page site —
+if the site ever grows a second page, give it its own `p=` or its hits land on `/`.
+
+Two properties to preserve if you touch it: it must **not** be `loading="lazy"` (a lazy 1x1 may never
+enter the viewport, so the request never fires and the count silently stays flat), and ad blockers
+drop it — the number is a floor, never inflated. Delete the one `<img>` and the page is fully
+self-contained again.
+
+Repo traffic (`scripts/download-stats.ps1`, or Insights → Traffic) is a *different* number: views of
+the repository, not of the Pages site. Don't conflate them.
+
+Apart from that pixel the landing page is a single self-contained file: inline CSS/SVG/JS, no other
+external request, no webfonts, no third-party script. Its hero demo is driven by real `window.getSelection()` and deliberately
 mirrors the app's behavior — `Config.WordPattern` verbatim, the 6s `TooltipTimeoutMs` auto-hide,
 mousedown-hides/mouseup-resolves ordering, total silence on a multi-word selection (because
 `Main.ahk` suppresses the `"not a single word"` error), the numbered two-sense layout, the quoted
