@@ -1,0 +1,186 @@
+# Builds and publishes the released binaries.
+#
+# Why this exists: a hand-compiled .exe uploaded from a maintainer's laptop is
+# unverifiable — you have to take the uploader's word that it was built from the
+# source in this repo. This workflow builds it on a clean GitHub runner from a
+# tagged commit, using pinned+checksummed toolchains, and attaches a build
+# provenance attestation. Anyone can then verify a downloaded binary with:
+#
+#   gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning
+#
+# which fails unless that exact file came out of this workflow, from this repo.
+#
+# Trigger: push a version tag.   git tag v1.1.0 && git push origin v1.1.0
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  # Lets a maintainer produce (and verify) an unpublished build without tagging.
+  workflow_dispatch:
+
+permissions:
+  contents: write      # create the release and upload assets
+  id-token: write      # sign the provenance attestation
+  attestations: write  # record it
+
+jobs:
+  build:
+    name: Build, attest, publish
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download AutoHotkey v2 (portable, pinned)
+        shell: pwsh
+        env:
+          # Keep in step with .github/workflows/ci.yml. To bump: raise the version,
+          # then take the matching hash from the release notes at
+          # https://github.com/AutoHotkey/AutoHotkey/releases
+          AHK_VERSION: "2.0.26"
+          AHK_SHA256: "43522AA3122A57784AC5DB30ABF85C2244475C36ACD7796E2C993355F9E926AE"
+        run: |
+          # Not autohotkey.com/download: that host is behind a Cloudflare challenge
+          # which serves CI an HTML interstitial instead of the zip. The official
+          # GitHub release asset is the same build and is not challenged.
+          $ver = $env:AHK_VERSION
+          $url = "https://github.com/AutoHotkey/AutoHotkey/releases/download/v${ver}/AutoHotkey_${ver}.zip"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile ahk.zip
+
+          $hash = (Get-FileHash ahk.zip -Algorithm SHA256).Hash
+          if ($hash -ne $env:AHK_SHA256) {
+            Write-Error "AutoHotkey checksum mismatch. Expected $($env:AHK_SHA256), got $hash"
+            exit 1
+          }
+          Write-Host "Checksum verified."
+
+          Expand-Archive -Path ahk.zip -DestinationPath ahk -Force
+          $exe = Get-ChildItem -Path ahk -Recurse -Filter "AutoHotkey64.exe" | Select-Object -First 1
+          if (-not $exe) { Write-Error "AutoHotkey64.exe not found in the archive."; exit 1 }
+          "AHK=$($exe.FullName)"           | Out-File -FilePath $env:GITHUB_ENV -Append
+          "WM_AUTOHOTKEY=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Download Ahk2Exe compiler (pinned)
+        shell: pwsh
+        env:
+          # https://github.com/AutoHotkey/Ahk2Exe/releases — bump both together.
+          AHK2EXE_TAG: "Ahk2Exe1.1.37.01c1"
+          AHK2EXE_ZIP: "Ahk2Exe1.1.37.01c1.zip"
+          AHK2EXE_SHA256: "4F30ED7899506D15974D12E428F4647660F97A52CC21DA06A6A295A06197BBD8"
+        run: |
+          $url = "https://github.com/AutoHotkey/Ahk2Exe/releases/download/$($env:AHK2EXE_TAG)/$($env:AHK2EXE_ZIP)"
+          Write-Host "Downloading $url"
+          Invoke-WebRequest -Uri $url -OutFile ahk2exe.zip
+
+          $hash = (Get-FileHash ahk2exe.zip -Algorithm SHA256).Hash
+          if ($hash -ne $env:AHK2EXE_SHA256) {
+            Write-Error "Ahk2Exe checksum mismatch. Expected $($env:AHK2EXE_SHA256), got $hash"
+            exit 1
+          }
+          Write-Host "Checksum verified."
+
+          Expand-Archive -Path ahk2exe.zip -DestinationPath ahk2exe -Force
+          $exe = Get-ChildItem -Path ahk2exe -Recurse -Filter "Ahk2Exe.exe" | Select-Object -First 1
+          if (-not $exe) { Write-Error "Ahk2Exe.exe not found in the archive."; exit 1 }
+          "WM_AHK2EXE=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Locate Inno Setup
+        shell: pwsh
+        run: |
+          $candidates = @(
+            "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe",
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) {
+            Write-Host "Inno Setup not on the runner image - installing."
+            choco install innosetup --version=6.2.2 -y --no-progress
+            if ($LASTEXITCODE -ne 0) { Write-Error "Inno Setup install failed."; exit 1 }
+            $iscc = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $iscc) { Write-Error "ISCC.exe still not found after install."; exit 1 }
+          Write-Host "ISCC: $iscc"
+          "WM_ISCC=$iscc" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      # WordNet is a fixed, versioned corpus, so this only re-downloads when the
+      # generator or its pinned version changes.
+      - name: Cache the WordNet download
+        uses: actions/cache@v4
+        with:
+          path: .staging/wordnet
+          key: wordnet-${{ hashFiles('scripts/build-dictionary.ps1') }}
+
+      - name: Build the bundled dictionary
+        shell: pwsh
+        run: .\scripts\build-dictionary.ps1
+
+      # A release must not be cut from a commit that fails the suite.
+      - name: Run tests
+        shell: pwsh
+        run: |
+          $out = & "$env:AHK" /ErrorStdOut "tests\LoadTest.ahk" 2>&1 | Out-String
+          Write-Host $out
+          if ($LASTEXITCODE -ne 0 -or ($out -notmatch "LOAD OK")) {
+            Write-Error "LoadTest failed (exit=$LASTEXITCODE)"; exit 1
+          }
+          foreach ($t in 'WrapTest','StartupTest','DictTest') {
+            $out = & "$env:AHK" /ErrorStdOut "tests\$t.ahk" 2>&1 | Out-String
+            Write-Host "== $t =="; Write-Host $out
+            if ($LASTEXITCODE -ne 0 -or ($out -notmatch "ALL PASS")) {
+              Write-Error "$t failed (exit=$LASTEXITCODE)"; exit 1
+            }
+          }
+
+      # The plain-script tests read the dictionary from assets\. Only a compile
+      # exercises the resource embedded in the .exe, which is the path every
+      # downloaded build uses.
+      - name: Verify the compiled build reads its embedded dictionary
+        shell: pwsh
+        run: .\scripts\test-compiled.ps1
+
+      # The same script a maintainer runs locally - no separate release build.
+      - name: Build the binaries
+        shell: pwsh
+        run: .\build.ps1 -RequireInstaller
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/WordMeaning.exe
+            dist/WordMeaning-Setup.exe
+
+      # Kept for workflow_dispatch runs, which have no release to upload to.
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: WordMeaning-binaries
+          path: |
+            dist/WordMeaning.exe
+            dist/WordMeaning-Setup.exe
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+
+      # gh is preinstalled on the runner; using it avoids adding a third-party
+      # action to the path that produces the binaries people download.
+      - name: Publish to the GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "${{ github.ref_name }}"
+          # A fresh tag per release: uploading over an existing asset with
+          # --clobber deletes it and resets its download counter to zero.
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag --title $tag --generate-notes `
+              dist/WordMeaning-Setup.exe dist/WordMeaning.exe dist/SHA256SUMS.txt
+          } else {
+            gh release upload $tag `
+              dist/WordMeaning-Setup.exe dist/WordMeaning.exe dist/SHA256SUMS.txt
+          }
+          if ($LASTEXITCODE -ne 0) { Write-Error "Publishing to the release failed."; exit 1 }

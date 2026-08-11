@@ -3,8 +3,13 @@ Desktop.ini
 *.bak
 *.tmp
 
-# Build output (produced by build.ps1; recreate with .\build.ps1)
+# Build output (produced by build.ps1; recreate with .\build.ps1).
+# Released binaries are built and published by .github/workflows/release.yml —
+# nothing compiled belongs in this repository.
 /dist/
-# Ahk2Exe download staging
+# Generated dictionary (produced by scripts\build-dictionary.ps1 from a pinned
+# WordNet release, so it is reproducible rather than committed).
+/assets/dictionary.dat
+# Tool and corpus download staging
 /.staging/
 .impeccable

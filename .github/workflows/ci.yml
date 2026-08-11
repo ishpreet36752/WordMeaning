@@ -42,6 +42,20 @@ jobs:
           if (-not $exe) { Write-Error "AutoHotkey64.exe not found in the archive."; exit 1 }
           "AHK=$($exe.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      # WordNet is a fixed, versioned corpus, so this only re-downloads when the
+      # generator or its pinned version changes.
+      - name: Cache the WordNet download
+        uses: actions/cache@v4
+        with:
+          path: .staging/wordnet
+          key: wordnet-${{ hashFiles('scripts/build-dictionary.ps1') }}
+
+      # The dictionary is generated, not committed. DictTest needs it, and
+      # generating it here also proves the generator still runs.
+      - name: Build the bundled dictionary
+        shell: pwsh
+        run: .\scripts\build-dictionary.ps1
+
       - name: Run LoadTest
         shell: pwsh
         run: |
@@ -52,10 +66,12 @@ jobs:
             exit 1
           }
 
-      - name: Run deterministic tests (WrapTest, StartupTest)
+      # SmokeTest is deliberately absent: it is the only test that needs a
+      # network, and it covers the fallback the app ships with switched off.
+      - name: Run deterministic tests (WrapTest, StartupTest, DictTest)
         shell: pwsh
         run: |
-          foreach ($t in 'WrapTest','StartupTest') {
+          foreach ($t in 'WrapTest','StartupTest','DictTest') {
             $out = & "$env:AHK" /ErrorStdOut "tests\$t.ahk" 2>&1 | Out-String
             Write-Host "== $t =="; Write-Host $out
             if ($LASTEXITCODE -ne 0 -or ($out -notmatch "ALL PASS")) {
