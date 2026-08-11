@@ -61,7 +61,7 @@ Both downloads live on the site, and you can try the actual interaction there be
 
 Either way, a tray icon (a blue **W**) appears near the clock and WordMeaning starts watching for word selections.
 
-> **Windows will warn you on first launch.** SmartScreen shows an "unrecognised app" dialog for any program whose publisher hasn't paid for a code-signing certificate, and this one hasn't. Click **More info**, then **Run anyway**. If you'd rather check first, the whole program is about six hundred lines of AutoHotkey in [`src/`](src/).
+> **Windows will warn you on first launch.** SmartScreen shows an "unrecognised app" dialog for any program whose publisher hasn't paid for a code-signing certificate, and this one hasn't. Click **More info**, then **Run anyway**. If you'd rather check first, the whole program is about eight hundred lines of AutoHotkey in [`src/`](src/).
 
 ### Verify what you downloaded
 
