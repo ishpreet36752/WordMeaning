@@ -31,21 +31,35 @@ One responsibility per file (see `CLAUDE.md` for the full architecture):
 | `src/Config.ahk` | All tunables — never hardcode values elsewhere |
 | `src/SelectionWatcher.ahk` | Detect selection, clipboard-safe capture, click-to-dismiss |
 | `src/FocusWatcher.ahk` | Dismiss popup on window/app switch |
-| `src/Dictionary.ahk` | API client: validate, fetch, parse, cache |
+| `src/LocalDictionary.ahk` | Bundled dictionary: binary search over the packed data, inflection stripping |
+| `src/Dictionary.ahk` | Validate, choose the sense, cache; optional online fallback |
 | `src/Popup.ahk` | Tooltip show/hide |
 
 ## Running the tests
 
+The dictionary is generated, not committed — build it once before running anything:
+
+```powershell
+.\scripts\build-dictionary.ps1        # writes assets\dictionary.dat
+```
+
 ```powershell
 $ahk = "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe"
-& $ahk /ErrorStdOut tests\LoadTest.ahk    # expect: LOAD OK   (no network needed)
-& $ahk /ErrorStdOut tests\SmokeTest.ahk   # expect: ALL PASS  (needs internet)
+& $ahk /ErrorStdOut tests\LoadTest.ahk     # expect: LOAD OK   (no network needed)
+& $ahk /ErrorStdOut tests\DictTest.ahk     # expect: ALL PASS  (no network needed)
+& $ahk /ErrorStdOut tests\WrapTest.ahk     # expect: ALL PASS  (no network needed)
+& $ahk /ErrorStdOut tests\StartupTest.ahk  # expect: ALL PASS  (no network needed)
+& $ahk /ErrorStdOut tests\SmokeTest.ahk    # expect: ALL PASS  (needs internet)
+.\scripts\test-compiled.ps1                # expect: ALL PASS  (needs Ahk2Exe)
 ```
 
 - **LoadTest** includes every module so all class initializers run — catches load-time faults.
-- **SmokeTest** exercises the dictionary lookup, validation, and cache.
+- **DictTest** covers the bundled dictionary: search, inflections, sense choice, misses.
+- **WrapTest** / **StartupTest** cover popup wrapping and the auto-start registry toggle.
+- **SmokeTest** is the only test that uses a network: it covers the *optional* online fallback, which ships switched off.
+- **test-compiled.ps1** compiles a probe and runs it, proving the .exe can read the dictionary embedded in it — the path every downloaded build uses, and the one no plain-script test can reach.
 
-CI runs `LoadTest` automatically on every push and pull request.
+CI runs everything except `SmokeTest` on each push and pull request; the release workflow additionally runs the compiled check before building.
 
 ## Coding conventions
 
@@ -61,9 +75,10 @@ CI runs `LoadTest` automatically on every push and pull request.
 
 ## Pull request checklist
 
-- [ ] `LoadTest` prints `LOAD OK` and `SmokeTest` prints `ALL PASS`.
+- [ ] `LoadTest` prints `LOAD OK`; `DictTest`, `WrapTest`, `StartupTest` print `ALL PASS`.
 - [ ] New tunables live in `Config.ahk`.
-- [ ] Behavior invariants preserved (clipboard restored, single-word only, no pronunciation, HTTPS only, no disk persistence — see `CLAUDE.md`).
+- [ ] Behavior invariants preserved (clipboard restored, single-word only, no pronunciation, offline by default, no disk persistence — see `CLAUDE.md`).
+- [ ] No compiled or generated file added to the repository.
 - [ ] Manually tested in at least a browser and a PDF reader.
 
 ## Scope

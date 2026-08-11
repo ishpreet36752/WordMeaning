@@ -362,9 +362,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
             Download for Windows
           </a>
-          <a class="alt-link" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning.exe">or take the portable .exe (1.6 MB)</a>
+          <a class="alt-link" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning.exe">or take the portable .exe (9 MB)</a>
         </div>
-        <p class="hero-meta">Windows 10 &amp; 11 · 2.9 MB · free and open source · no account</p>
+        <p class="hero-meta">Windows 10 &amp; 11 · 4.5 MB · works offline · free and open source · no account</p>
       </div>
     </div>
   </section>
@@ -410,8 +410,8 @@
           <p>Copying the word is how the lookup works, so whatever you had copied is saved first and put back immediately afterwards, including when a lookup fails.</p>
         </div>
         <div class="fact">
-          <h3>It doesn't send anything but the single word</h3>
-          <p>One request over HTTPS to one pinned host, freedictionaryapi.com; if that host has no entry for the word, one more to api.datamuse.com. No account, no identifier, no analytics, no telemetry. Your browser is only ever opened by you pressing Ctrl+Shift+D.</p>
+          <h3>It doesn't go online at all</h3>
+          <p>The dictionary is inside the program: 86,000 entries from WordNet, searched on your own machine. No request leaves your computer for a lookup, and it works on a plane. A tray switch can check missing words against an online dictionary, and it is off until you turn it on. Your browser is only ever opened by you pressing Ctrl+Shift+D.</p>
         </div>
         <div class="fact">
           <h3>It doesn't read sentences</h3>
@@ -419,7 +419,11 @@
         </div>
         <div class="fact">
           <h3>It doesn't hide its source</h3>
-          <p>The whole program is about five hundred lines of AutoHotkey v2 on GitHub under the MIT licence. You can read every line before you run it.</p>
+          <p>The whole program is about six hundred lines of AutoHotkey v2 on GitHub under the MIT licence. You can read every line before you run it.</p>
+        </div>
+        <div class="fact">
+          <h3>It doesn't ask you to trust the .exe</h3>
+          <p>Both downloads are built by GitHub Actions on a clean machine from a tagged commit, and carry a signed provenance attestation. <code>gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning</code> fails unless the exact file you have came out of that build. No binary is committed to the repository.</p>
         </div>
       </div>
 
@@ -471,7 +475,7 @@
 <footer class="foot">
   <div class="wrap foot-row">
     <span>WordMeaning · <a href="https://github.com/ishpreet36752/WordMeaning/blob/main/LICENSE">MIT licence</a></span>
-    <span class="dev">Definitions from <a href="https://en.wiktionary.org/">Wiktionary</a> via <a href="https://freedictionaryapi.com/">FreeDictionaryAPI.com</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></span>
+    <span class="dev">Definitions from <a href="https://wordnet.princeton.edu/">WordNet 3.1</a>, Princeton University. WordNet 3.1 Copyright 2011 by Princeton University. All rights reserved.</span>
     <a href="https://github.com/ishpreet36752/WordMeaning">Source</a>
     <a href="https://github.com/ishpreet36752/WordMeaning/issues">Report a bug</a>
     <span class="dev">This page counts visits with <a href="https://www.goatcounter.com/">GoatCounter</a> — no cookies, no script. The program itself sends nothing.</span>
