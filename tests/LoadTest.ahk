@@ -5,6 +5,7 @@
 ; Run: AutoHotkey64.exe /ErrorStdOut tests\LoadTest.ahk   (no network needed)
 #Requires AutoHotkey v2.0
 #Include ..\src\Config.ahk
+#Include ..\src\LocalDictionary.ahk
 #Include ..\src\Dictionary.ahk
 #Include ..\src\Popup.ahk
 #Include ..\src\SelectionWatcher.ahk

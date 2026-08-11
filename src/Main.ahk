@@ -3,7 +3,13 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
+; The bundled dictionary travels inside the .exe as a resource, so the portable
+; build stays one file and a lookup never touches the disk. Compiled builds read
+; it from there; a source run reads assets\dictionary.dat directly.
+;@Ahk2Exe-AddResource *10 ..\assets\dictionary.dat, DICT
+
 #Include Config.ahk
+#Include LocalDictionary.ahk
 #Include Dictionary.ahk
 #Include Popup.ahk
 #Include SelectionWatcher.ahk
@@ -83,6 +89,11 @@ InitTray() {
     A_TrayMenu.Add("Start with Windows", ToggleStartup)
     if Startup.IsEnabled()
         A_TrayMenu.Check("Start with Windows")
+    ; Session-only, deliberately not remembered: enabling the network is a
+    ; decision the user should re-make, not something a config file makes for them.
+    A_TrayMenu.Add(Config.OnlineMenuText, ToggleOnline)
+    if Dictionary.onlineFallback
+        A_TrayMenu.Check(Config.OnlineMenuText)
     A_TrayMenu.Add()                              ; separator
     A_TrayMenu.Add("About", ShowAbout)            ; carries the CC BY-SA attribution
     A_TrayMenu.Add("Exit", (*) => ExitApp())
@@ -99,6 +110,17 @@ ToggleStartup(*) {
         A_TrayMenu.Check("Start with Windows")
     else
         A_TrayMenu.Uncheck("Start with Windows")
+}
+
+; Words that missed while offline-only must be retried once the network is
+; allowed, so the session cache goes with the switch.
+ToggleOnline(*) {
+    Dictionary.onlineFallback := !Dictionary.onlineFallback
+    Dictionary.ClearCache()
+    if Dictionary.onlineFallback
+        A_TrayMenu.Check(Config.OnlineMenuText)
+    else
+        A_TrayMenu.Uncheck(Config.OnlineMenuText)
 }
 
 ToggleEnabled(*) {

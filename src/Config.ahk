@@ -8,16 +8,34 @@ class Config {
     ; Per-user auto-start on login. HKCU only — no admin, no machine-wide change.
     static StartupRegKey := "HKCU\Software\Microsoft\Windows\CurrentVersion\Run"
 
-    ; --- Dictionary APIs (HTTPS only; hosts are pinned, word is path-encoded) ---
-    ; Primary: Wiktionary data, no API key, structured senses with example sentences.
+    ; --- Bundled dictionary (the only source consulted by default) ---
+    ; 86k entries generated from WordNet 3.1 by scripts\build-dictionary.ps1.
+    ; Compiled builds carry it as a resource inside the .exe; a source run reads
+    ; it from assets\. Either way no request leaves the machine for a lookup.
+    static DictRelPath := "..\assets\dictionary.dat"    ; from src\ (dev run)
+    static DictResourceName := "DICT"                   ; RT_RCDATA name when compiled
+
+    ; --- Optional online fallback (off by default; user turns it on in the tray) ---
+    ; WordNet is a fixed snapshot and misses newer or rarer words ("delimiter").
+    ; Turning this on trades a network request for that coverage; leaving it off
+    ; means the program never opens a socket at all.
+    static OnlineFallbackDefault := false
+    ; HTTPS only; hosts are pinned, word is path-encoded.
     static ApiBase := "https://freedictionaryapi.com/api/v1/entries/en/"
-    ; Fallback: the primary's Wiktionary snapshot has gaps (e.g. "delimiter"), so a
-    ; miss there is not proof the word is undefined. One call, no key, definitions only.
+    ; The Wiktionary snapshot behind the primary has gaps of its own, so a miss
+    ; there is not proof the word is undefined. One call, no key, definitions only.
     static ApiFallbackBase := "https://api.datamuse.com/words?md=d&max=1&sp="
-    ; Required attribution for the primary's CC BY-SA 4.0 text (shown in tray → About).
-    static AttributionText := "Definitions from Wiktionary via FreeDictionaryAPI.com`n"
-                            . "Text licensed CC BY-SA 4.0`n"
-                            . "Fallback definitions from api.datamuse.com"
+    static OnlineMenuText := "Look up missing words online"
+
+    ; Attribution for the bundled data and for the optional online sources
+    ; (shown in tray → About). WordNet requires its notice be reproduced; the
+    ; primary online source is CC BY-SA 4.0.
+    static AttributionText := "Definitions from WordNet 3.1, Princeton University.`n"
+                            . "WordNet 3.1 Copyright 2011 by Princeton University.`n"
+                            . "All rights reserved. https://wordnet.princeton.edu/`n`n"
+                            . "Optional online lookups (off by default):`n"
+                            . "Wiktionary via FreeDictionaryAPI.com, CC BY-SA 4.0`n"
+                            . "api.datamuse.com"
 
     ; --- Web-search fallback (user-initiated only — never opens the browser by itself) ---
     static WebSearchUrl := "https://www.google.com/search?q=define+"

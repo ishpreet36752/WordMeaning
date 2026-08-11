@@ -1,13 +1,24 @@
-; Dictionary.ahk — freedictionaryapi.com client (Wiktionary data, no API key) with a
-; Datamuse fallback for words the primary's snapshot is missing.
-; Wiktionary lists senses in historical order, so the first one is often the least
-; useful ("juxtaposition: the nearness of objects with little or no delimiter").
-; _Score picks the most everyday sense instead and carries its example sentence.
+; Dictionary.ahk — sense selection and lookup routing.
+;
+; Every lookup is answered from the bundled offline dictionary (LocalDictionary).
+; Only if the user has switched the online fallback on does a missing word reach
+; the network: freedictionaryapi.com (Wiktionary data, no API key) with a Datamuse
+; fallback for words that snapshot is missing.
+;
+; Both online sources list senses in historical order, so the first one is often the
+; least useful ("juxtaposition: the nearness of objects with little or no delimiter").
+; _Score picks the most everyday sense instead and carries its example sentence; the
+; offline data is built with the same rules applied ahead of time.
 ; Input validation, HTTPS only, session cache. Pronunciation fields ignored by design.
 #Requires AutoHotkey v2.0
 
 class Dictionary {
     static _cache := Map()
+
+    ; User-controlled (tray menu). Off by default: a dictionary that ships its own
+    ; data has no reason to make requests, and the default should not be the one
+    ; that talks to servers.
+    static onlineFallback := Config.OnlineFallbackDefault
 
     ; Returns { ok, word, partOfSpeech, definition, example, error }
     static Lookup(word) {
@@ -20,12 +31,33 @@ class Dictionary {
         if Dictionary._cache.Has(key)
             return Dictionary._cache[key]
 
-        result := Dictionary._Fetch(key)
+        result := Dictionary._Resolve(key)
 
         if (Dictionary._cache.Count >= Config.CacheMaxEntries)
             Dictionary._cache.Clear()
         Dictionary._cache[key] := result
         return result
+    }
+
+    ; Toggling the online fallback has to drop the cache: words that failed while
+    ; offline-only would otherwise stay failed for the rest of the session.
+    static ClearCache() {
+        Dictionary._cache.Clear()
+    }
+
+    ; Offline first, always. The network is consulted only for what the bundled
+    ; data does not have, and only with the user's say-so.
+    static _Resolve(word) {
+        rec := LocalDictionary.Lookup(word)
+        if (rec != "")
+            return Dictionary._Result(rec.word, rec.pos, rec.def, rec.alt, rec.example)
+
+        if !Dictionary.onlineFallback {
+            return Dictionary._Fail(word, LocalDictionary.Available()
+                ? "no definition found"
+                : "dictionary unavailable")
+        }
+        return Dictionary._Fetch(word)
     }
 
     ; Public so callers can build the web-search URL without a second encoder.
