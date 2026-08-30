@@ -7,6 +7,7 @@
 <meta name="google-site-verification" content="g5fw7CV7KOD6yG0Cpvu0VgiCrW69x64SnD1AOL4sC7U">
 <title>WordMeaning - instant word definition popup for Windows</title>
 <meta name="description" content="Free Windows tray app. Select a word in any app - browser, PDF, Word - and its definition appears at your cursor, then disappears. Nothing is stored.">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
 <link rel="canonical" href="https://ishpreet36752.github.io/WordMeaning/">
 
 <meta property="og:type" content="website">
@@ -266,6 +267,25 @@
     border: 2px dashed #b3261e;
   }
 
+  /* FAQ */
+  .faq details { border-top: 1px solid #d3d5d9; padding: 13px 0; }
+  .faq details:last-of-type { border-bottom: 1px solid #d3d5d9; }
+  .faq summary {
+    cursor: pointer; font-weight: 600; list-style: none;
+    display: flex; gap: 10px; align-items: baseline;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before {
+    content: "+"; font-family: var(--chrome-font); font-weight: 700; color: var(--navy); flex: none;
+  }
+  .faq details[open] summary::before { content: "2"; }
+  .faq summary:focus-visible { outline: 2px dotted #000; outline-offset: 3px; }
+  .faq details p { margin: 10px 0 0 20px; color: var(--ink-soft); font-size: .98rem; }
+  .more { margin: 34px 0 0; }
+  .more h3 { font-size: 1.02rem; margin: 0 0 8px; }
+  .more ul { margin: 0; padding-left: 20px; }
+  .more li { margin-bottom: 7px; color: var(--ink-soft); }
+
   /* developers + footer */
   .dev { color: var(--ink-soft); }
   .dev a, .foot a { color: #0b4fa8; }
@@ -313,6 +333,86 @@
   "codeRepository": "https://github.com/ishpreet36752/WordMeaning"
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is WordMeaning free?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. It is free under the MIT licence, with no account, no ads, no paid tier and no telemetry. The whole source is on GitHub."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work without an internet connection?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, and that is the default. About 86,000 WordNet 3.1 entries are compiled into the program, so every lookup is answered on your own machine. A tray switch can check missing words against an online dictionary; it is off until you turn it on and is never saved to a file."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which programs does it work in?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Any Windows program you can select text in: Chrome, Edge and Firefox, PDF readers with a text layer, Word, Notepad, Outlook, chat apps and code editors. Scanned image-only PDFs have no text to select, so nothing happens there."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to install AutoHotkey?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Both downloads contain everything, including the dictionary. The installer is per-user and needs no administrator rights; the portable .exe is a single file you can run from a USB stick."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it store the words I look up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Lookups live in memory for the session and are gone when the program exits. There is no history file, no log and no database, and your clipboard is restored after every lookup, including a failed one."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does Windows show a SmartScreen warning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Because the program is not code-signed, which costs a few hundred dollars a year. Click More info, then Run anyway. Both downloads are built by GitHub Actions from a tagged commit with a signed provenance attestation, so you can verify what you got: gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens when a word is not in the dictionary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The popup says so and offers Ctrl+Shift+D, which searches the web for that word in your browser. The program never opens a browser on its own, and that hotkey exists only while a popup is on screen, so it cannot shadow the same combination in other programs."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I uninstall it?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you used the installer, remove it from Settings, Apps, Installed apps, which also deletes the auto-start registry value it may have written. For the portable .exe, exit from the tray menu and delete the file."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it work on macOS or Linux?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. It is Windows 10 and 11 only: the program is written in AutoHotkey v2, which is Windows-only."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -356,7 +456,7 @@
       </div>
 
       <div class="hero-after">
-        <p>WordMeaning sits in your system tray. Select a single word in any program and its definition appears at your cursor, then disappears after six seconds. It shows the part of speech, up to two meanings, and an example sentence when there is one. No pronunciation, no audio.</p>
+        <p><b>WordMeaning is a free, open-source word-definition popup for Windows 10 and 11.</b> It sits in your system tray. Select a single word in any program and its definition appears at your cursor, then disappears after six seconds. It shows the part of speech, up to two meanings, and an example sentence when there is one. No pronunciation, no audio.</p>
         <div class="cta-row">
           <a class="btn btn-lg" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
@@ -463,6 +563,64 @@
     </div>
   </section>
 
+
+  <!-- ============ FAQ: the questions people ask before downloading an unsigned .exe ============ -->
+  <section class="paper-sec" id="faq" style="background:var(--paper); border-bottom:1px solid #d3d5d9">
+    <div class="wrap">
+      <h2>Questions</h2>
+      <p class="sec-intro">Everything people ask before running a program that watches what they select.</p>
+
+      <div class="faq">
+        <details>
+          <summary>Is WordMeaning free?</summary>
+          <p>Yes. It is free under the MIT licence, with no account, no ads, no paid tier and no telemetry. The whole source is on GitHub.</p>
+        </details>
+        <details>
+          <summary>Does it work without an internet connection?</summary>
+          <p>Yes, and that is the default. About 86,000 WordNet 3.1 entries are compiled into the program, so every lookup is answered on your own machine. A tray switch can check missing words against an online dictionary; it is off until you turn it on and is never saved to a file.</p>
+        </details>
+        <details>
+          <summary>Which programs does it work in?</summary>
+          <p>Any Windows program you can select text in: Chrome, Edge and Firefox, PDF readers with a text layer, Word, Notepad, Outlook, chat apps and code editors. Scanned image-only PDFs have no text to select, so nothing happens there.</p>
+        </details>
+        <details>
+          <summary>Do I need to install AutoHotkey?</summary>
+          <p>No. Both downloads contain everything, including the dictionary. The installer is per-user and needs no administrator rights; the portable .exe is a single file you can run from a USB stick.</p>
+        </details>
+        <details>
+          <summary>Does it store the words I look up?</summary>
+          <p>No. Lookups live in memory for the session and are gone when the program exits. There is no history file, no log and no database, and your clipboard is restored after every lookup, including a failed one.</p>
+        </details>
+        <details>
+          <summary>Why does Windows show a SmartScreen warning?</summary>
+          <p>Because the program is not code-signed, which costs a few hundred dollars a year. Click More info, then Run anyway. Both downloads are built by GitHub Actions from a tagged commit with a signed provenance attestation, so you can verify what you got: gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning</p>
+        </details>
+        <details>
+          <summary>What happens when a word is not in the dictionary?</summary>
+          <p>The popup says so and offers Ctrl+Shift+D, which searches the web for that word in your browser. The program never opens a browser on its own, and that hotkey exists only while a popup is on screen, so it cannot shadow the same combination in other programs.</p>
+        </details>
+        <details>
+          <summary>How do I uninstall it?</summary>
+          <p>If you used the installer, remove it from Settings, Apps, Installed apps, which also deletes the auto-start registry value it may have written. For the portable .exe, exit from the tray menu and delete the file.</p>
+        </details>
+        <details>
+          <summary>Does it work on macOS or Linux?</summary>
+          <p>No. It is Windows 10 and 11 only: the program is written in AutoHotkey v2, which is Windows-only.</p>
+        </details>
+      </div>
+
+      <div class="more">
+        <h3>More detail</h3>
+        <ul>
+          <li><a href="offline-dictionary-windows.html">An offline dictionary for Windows that needs no internet</a></li>
+          <li><a href="look-up-words-while-reading.html">How to look up a word without leaving what you are reading</a></li>
+          <li><a href="dictionary-popup-for-pdf-windows.html">A dictionary popup that works inside PDFs</a></li>
+          <li><a href="dictionary-popup-alternatives-windows.html">Dictionary popup tools for Windows, compared honestly</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ DEVELOPERS (footnote weight, not a second campaign) ============ -->
   <section class="paper-sec" id="dev" style="padding:40px 0">
     <div class="wrap">
@@ -500,6 +658,7 @@
   <div class="task-links">
     <a href="#how">How it works</a>
     <a href="#trust">What it doesn't do</a>
+    <a href="#faq">Questions</a>
   </div>
   <span class="tray" aria-hidden="true">Windows 10 &amp; 11</span>
   <a class="btn btn-sm" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">Download</a>

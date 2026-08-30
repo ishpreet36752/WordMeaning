@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A dictionary popup that works inside PDFs on Windows</title>
+<meta name="description" content="Adobe Reader and Edge have no built-in dictionary. Select a word in any PDF with a text layer and get its definition at the cursor, offline. Works in Word and Kindle for PC too.">
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large">
+<link rel="canonical" href="https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="WordMeaning">
+<meta property="og:url" content="https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html">
+<meta property="og:title" content="A dictionary popup that works inside PDFs on Windows">
+<meta property="og:description" content="Select a word in a PDF, Word document or Kindle for PC and read the definition at your cursor. Offline, free, no reader plugin.">
+<meta property="og:image" content="https://ishpreet36752.github.io/WordMeaning/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A Windows 95 style window with the word 'ephemeral' selected and a tooltip showing its definition.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A dictionary popup that works inside PDFs on Windows">
+<meta name="twitter:description" content="Select a word in a PDF and read the definition at your cursor. Offline, free, no reader plugin.">
+<meta name="twitter:image" content="https://ishpreet36752.github.io/WordMeaning/assets/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20fill='%23000080'/%3E%3Ctext%20x='50'%20y='54'%20text-anchor='middle'%20dominant-baseline='central'%20font-family='Tahoma,Arial,sans-serif'%20font-weight='700'%20font-size='62'%20fill='white'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/article.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "WordMeaning", "item": "https://ishpreet36752.github.io/WordMeaning/" },
+        { "@type": "ListItem", "position": 2, "name": "Dictionary popup for PDFs", "item": "https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html" }
+      ]
+    },
+    {
+      "@type": "Article",
+      "headline": "A dictionary popup that works inside PDFs on Windows",
+      "description": "How to get word definitions while reading a PDF on Windows, in any reader, without a plugin and without a network connection.",
+      "url": "https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html",
+      "image": "https://ishpreet36752.github.io/WordMeaning/assets/og.png",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "author": { "@type": "Person", "name": "ishpreet36752", "url": "https://github.com/ishpreet36752" },
+      "publisher": { "@type": "Person", "name": "ishpreet36752", "url": "https://github.com/ishpreet36752" },
+      "mainEntityOfPage": "https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html",
+      "about": { "@type": "SoftwareApplication", "name": "WordMeaning", "operatingSystem": "Windows 10, Windows 11", "applicationCategory": "UtilitiesApplication" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How do I look up a word in a PDF on Windows?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Run a system-wide tray dictionary rather than a reader plugin. With WordMeaning running, double-click a word in Adobe Acrobat Reader, Microsoft Edge, Chrome's PDF viewer, Foxit or SumatraPDF and the definition appears at the cursor. It works in any reader because it watches the text selection, not the application." }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does nothing happen when I select a word in my PDF?",
+          "acceptedAnswer": { "@type": "Answer", "text": "The PDF is probably a scan. An image-only PDF has no text layer, so there is nothing to select and nothing to look up. If you can drag a selection and see text highlight, the file has a text layer; if the cursor draws a box over a picture instead, it does not." }
+        },
+        {
+          "@type": "Question",
+          "name": "Does a PDF dictionary popup need an internet connection?",
+          "acceptedAnswer": { "@type": "Answer", "text": "WordMeaning does not. About 86,000 WordNet entries are compiled into the program, so definitions work on a plane or on an air-gapped machine. An optional tray switch can check missing words online and is off until you turn it on." }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<header class="head">
+  <div class="wrap">
+    <p class="crumbs"><a href="./">WordMeaning</a> &rsaquo; Dictionary popup for PDFs</p>
+    <h1>A dictionary popup that works inside PDFs on Windows</h1>
+    <p class="standfirst">Acrobat, Edge and SumatraPDF have no dictionary of their own. One tray program gives all of them the same one, with no plugin and no connection.</p>
+  </div>
+</header>
+
+<article>
+  <div class="wrap">
+
+    <div class="answer in">
+      <p><strong>Use a system-wide tray dictionary instead of a reader plugin.</strong> <a href="./">WordMeaning</a> watches the text selection, not the application, so double-clicking a word inside Adobe Acrobat Reader, Microsoft Edge, Chrome's built-in viewer, Foxit or SumatraPDF shows the definition at your cursor and hides it again after six seconds. Every lookup is answered offline from about 86,000 WordNet entries inside the program.</p>
+      <p>Free and open source for Windows 10 and 11: <a href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">installer (4.5 MB)</a>, <a href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning.exe">portable .exe (9 MB)</a>.</p>
+    </div>
+
+    <h2>Why PDF readers are the worst case</h2>
+    <p>A browser at least has extensions. A PDF reader usually has neither a dictionary nor a plugin worth installing, and academic reading is exactly where unfamiliar words arrive in bulk. The normal workaround is to copy the word, switch to a browser, paste it, read, and then hunt for the paragraph you left. Twice a page, that is the reason the paper does not get finished.</p>
+    <p>Because the lookup here is triggered by selection at the OS level, the reader does not need to cooperate. Anything that lets you highlight text is supported by definition.</p>
+
+    <div class="tbl-scroll">
+      <table class="tbl">
+        <thead>
+          <tr><th>Where you are reading</th><th>What works</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Acrobat Reader, Foxit, SumatraPDF, PDF-XChange</td><td>Double-click or drag across a word</td></tr>
+          <tr><td>Edge and Chrome PDF viewers</td><td>Double-click or drag across a word</td></tr>
+          <tr><td>Word, Notepad, Outlook, Slack, VS Code</td><td>Same gesture, same popup</td></tr>
+          <tr><td>Kindle for PC, Calibre's viewer</td><td>Works wherever selection is allowed by the app</td></tr>
+          <tr><td>A scanned, image-only PDF</td><td>Nothing to select, so nothing happens. That would need OCR, which this does not do</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Set it up</h2>
+    <ol class="steps">
+      <li><b>Install</b> the <a href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">installer</a> or run the <a href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning.exe">portable .exe</a>. No administrator rights, no AutoHotkey install, nothing to configure in your PDF reader.</li>
+      <li><b>Click through SmartScreen</b> on first launch: <b>More info</b>, then <b>Run anyway</b>. The dialog appears for every unsigned program, and this one is unsigned because a certificate costs a few hundred dollars a year.</li>
+      <li><b>Open your PDF</b> and double-click a word. The popup shows the part of speech, up to two meanings, and an example sentence when the dictionary has a plain one.</li>
+      <li><b>Carry on reading.</b> Click, switch windows or wait six seconds. For a word the dictionary lacks, press <b>Ctrl+Shift+D</b> while the popup is up and it goes to a web search in your browser.</li>
+    </ol>
+
+    <h2>If nothing happens</h2>
+    <ul>
+      <li><b>The page is a scan.</b> Drag across a line: if no text highlights, the file is images and there is no text layer to read. OCR the file first with your reader's own tool, then the popup works.</li>
+      <li><b>You selected more than one word.</b> Multi-word selections are ignored on purpose, silently, so the popup never interrupts ordinary highlighting.</li>
+      <li><b>The reader blocks copying.</b> A few DRM-protected or permission-restricted documents refuse the copy the lookup depends on. Nothing is shown in that case.</li>
+      <li><b>The popup lingers after Ctrl+Tab.</b> Switching tabs by keyboard stays inside the same window, so it is not seen as a window switch. Click anywhere, or wait for the six-second timer.</li>
+    </ul>
+
+    <div class="note in">
+      <p><strong>Annotation tools are not affected.</strong> The lookup reads the selection and puts your clipboard back exactly as it was, so highlighting, copying quotes into your notes, and citation managers all keep working the way they did.</p>
+    </div>
+
+    <h2>Questions</h2>
+    <div class="faq">
+      <details>
+        <summary>How do I look up a word in a PDF on Windows?</summary>
+        <p>Run a system-wide tray dictionary rather than a reader plugin. With WordMeaning running, double-click a word in Acrobat Reader, Edge, Chrome's viewer, Foxit or SumatraPDF and the definition appears at the cursor. It works in any reader because it watches the text selection, not the application.</p>
+      </details>
+      <details>
+        <summary>Why does nothing happen when I select a word in my PDF?</summary>
+        <p>The file is probably a scan. An image-only PDF has no text layer, so there is nothing to select. If dragging highlights text, the layer is there; if it draws a box over a picture, it is not.</p>
+      </details>
+      <details>
+        <summary>Does it need an internet connection?</summary>
+        <p>No. About 86,000 WordNet entries are compiled into the program, so it works on a plane or on a machine with no network. An optional tray switch checks missing words against an online dictionary and is off until you turn it on.</p>
+      </details>
+      <details>
+        <summary>Is there anything to install in Acrobat?</summary>
+        <p>No. There is no plugin, no extension and no per-reader setup. The tray program is the whole thing.</p>
+      </details>
+      <details>
+        <summary>Does it work with Kindle for PC?</summary>
+        <p>Wherever the app allows a text selection, yes. Apps that block selection or copying entirely give the lookup nothing to read, and it stays silent.</p>
+      </details>
+    </div>
+
+    <div class="cta-row">
+      <a class="btn" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        Download for Windows
+      </a>
+      <a href="./">or try the demo first</a>
+    </div>
+    <p class="cta-meta">Windows 10 &amp; 11 · works offline · free and open source · no reader plugin</p>
+
+  </div>
+</article>
+
+<section class="related">
+  <div class="wrap">
+    <h2>Read next</h2>
+    <ul>
+      <li><a href="offline-dictionary-windows.html">An offline dictionary for Windows that needs no internet</a></li>
+      <li><a href="look-up-words-while-reading.html">How to look up a word without leaving what you are reading</a></li>
+      <li><a href="dictionary-popup-alternatives-windows.html">Dictionary popup tools for Windows, compared honestly</a></li>
+    </ul>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-row">
+    <span>WordMeaning · <a href="https://github.com/ishpreet36752/WordMeaning/blob/main/LICENSE">MIT licence</a></span>
+    <span class="dev">Definitions from <a href="https://wordnet.princeton.edu/">WordNet 3.1</a>, Princeton University. WordNet 3.1 Copyright 2011 by Princeton University. All rights reserved.</span>
+    <a href="https://github.com/ishpreet36752/WordMeaning">Source</a>
+    <a href="https://github.com/ishpreet36752/WordMeaning/issues">Report a bug</a>
+  </div>
+</footer>
+
+<!-- Visit counter: GoatCounter's no-JS pixel, one request, no cookie, no script.
+     Each page carries its own p= or its hits land on the front page's path. -->
+<img src="https://wordmeaning.goatcounter.com/count?p=%2Fdictionary-popup-for-pdf-windows&amp;t=Dictionary%20popup%20for%20PDFs"
+     alt="" aria-hidden="true" width="1" height="1" loading="eager" referrerpolicy="no-referrer-when-downgrade"
+     style="position:absolute;top:0;left:0;width:1px;height:1px;border:0;opacity:0;pointer-events:none">
+
+<nav class="taskbar" aria-label="Primary">
+  <a class="start" href="./"><span class="mark" aria-hidden="true">W</span>WordMeaning</a>
+  <div class="task-links">
+    <a href="./#how">How it works</a>
+    <a href="./#trust">What it doesn't do</a>
+    <a href="./#faq">FAQ</a>
+  </div>
+  <a class="btn btn-sm" href="https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe">Download</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+# WordMeaning
+
+> A free, open-source word-definition popup for Windows 10 and 11. It runs in the system tray;
+> select a single word in any program and its definition appears at the cursor, then disappears
+> after six seconds. About 86,000 WordNet 3.1 entries are compiled into the program, so lookups
+> work with no internet connection. Nothing is written to disk.
+
+Site: https://ishpreet36752.github.io/WordMeaning/
+Source: https://github.com/ishpreet36752/WordMeaning (MIT licence)
+Downloads (GitHub Releases, built in CI with a signed provenance attestation):
+- Installer, ~4.5 MB: https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning-Setup.exe
+- Portable single .exe, ~9 MB: https://github.com/ishpreet36752/WordMeaning/releases/latest/download/WordMeaning.exe
+
+## Facts
+
+- Platform: Windows 10 and 11 only. No macOS or Linux build (written in AutoHotkey v2).
+- Price: free. MIT licence, no account, no ads, no paid tier, no telemetry, no API key.
+- Gesture: double-click a word, or drag across it, in any program that allows text selection.
+- Shows: the word, its part of speech, up to two meanings, and an example sentence when the
+  dictionary has a plain one. Pronunciation and audio are deliberately never shown.
+- Dismiss: click anywhere, switch windows, or wait six seconds.
+- Offline: the dictionary ships inside the program; no request leaves the machine for a lookup.
+  An optional tray switch checks missing words against an online dictionary. It is off by
+  default, is session-only, and is never written to a config file.
+- Privacy: looked-up words are held in memory for the session only. No history file, no log, no
+  database. The clipboard is used to read the selection and is restored immediately afterwards,
+  including when a lookup fails.
+- Misses: a word the corpus lacks (proper nouns, brand names, very new slang) shows a miss plus
+  a Ctrl+Shift+D hint that searches the web in your browser. The program never opens a browser
+  on its own, and that hotkey is registered only while a popup is on screen.
+- Install: per-user, no administrator rights. The portable .exe needs no install at all.
+- SmartScreen warns on first launch because the binary is not code-signed. The releases carry a
+  build provenance attestation instead: `gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning`.
+- Data source: WordNet 3.1, Princeton University. WordNet 3.1 Copyright 2011 by Princeton
+  University. All rights reserved.
+
+## Limits
+
+- English only, single words only. Phrases, idioms and multi-word selections are ignored.
+- Fixed 2011 corpus: no proper nouns, no brand names, no recent slang.
+- Scanned image-only PDFs have no text layer, so there is nothing to select.
+- No thesaurus, no translation, no pronunciation audio.
+
+## Pages
+
+- https://ishpreet36752.github.io/WordMeaning/: what it is, a live demo of the gesture, downloads, FAQ.
+- https://ishpreet36752.github.io/WordMeaning/offline-dictionary-windows.html: why and how the dictionary is bundled, and how to verify it works with no network.
+- https://ishpreet36752.github.io/WordMeaning/look-up-words-while-reading.html: the setup, in four steps, for reading without tab switches.
+- https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html: word lookup inside PDF readers, Word and Kindle for PC.
+- https://ishpreet36752.github.io/WordMeaning/dictionary-popup-alternatives-windows.html: browser extension vs desktop dictionary vs website vs this, including where this one is the wrong choice.

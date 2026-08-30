@@ -1,0 +1,202 @@
+/* Shared stylesheet for the article pages (offline-dictionary-windows.html and
+   friends). index.html deliberately keeps its own CSS inline — it is the one
+   page that must stay a single self-contained file. The article pages share
+   this one same-origin file instead, so the Win95 grammar is defined once.
+   No webfont, no third-party request; system fonts only. */
+
+:root {
+  --grey: #c0c0c0;
+  --grey-lit: #ffffff;
+  --grey-soft: #dfdfdf;
+  --grey-mid: #808080;
+  --grey-dk: #000000;
+  --navy: #000080;
+  --desk: #0b6e6e;
+
+  --paper: #ffffff;
+  --page: #edeef0;
+  --ink: #171717;
+  --ink-soft: #4a4a4d;
+
+  --chrome-font: Tahoma, "MS Sans Serif", Verdana, Geneva, system-ui, sans-serif;
+  --body-font: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  --maxw: 820px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  padding-bottom: 54px;              /* clear the fixed taskbar */
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--body-font);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+p, li { max-width: 68ch; }
+img { max-width: 100%; height: auto; }
+
+/* ---------- Win95 bevels ---------- */
+.out {
+  border: 2px solid;
+  border-color: var(--grey-lit) var(--grey-dk) var(--grey-dk) var(--grey-lit);
+  box-shadow: inset 1px 1px 0 var(--grey-soft), inset -1px -1px 0 var(--grey-mid);
+  background: var(--grey);
+}
+.in {
+  border: 2px solid;
+  border-color: var(--grey-mid) var(--grey-lit) var(--grey-lit) var(--grey-mid);
+  box-shadow: inset 1px 1px 0 var(--grey-dk), inset -1px -1px 0 var(--grey-soft);
+  background: var(--paper);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--chrome-font); font-size: 15px; font-weight: 700;
+  color: #000; background: var(--grey); text-decoration: none;
+  padding: 11px 22px; cursor: pointer;
+  border: 2px solid;
+  border-color: var(--grey-lit) var(--grey-dk) var(--grey-dk) var(--grey-lit);
+  box-shadow: inset 1px 1px 0 var(--grey-soft), inset -1px -1px 0 var(--grey-mid);
+}
+.btn:active {
+  border-color: var(--grey-mid) var(--grey-lit) var(--grey-lit) var(--grey-mid);
+  box-shadow: inset 1px 1px 0 var(--grey-dk), inset -1px -1px 0 var(--grey-soft);
+  padding: 12px 21px 10px 23px;
+}
+.btn:focus-visible { outline: 2px dotted #000; outline-offset: -6px; }
+.btn svg { width: 17px; height: 17px; flex: none; }
+.btn-sm { font-size: 13px; padding: 6px 12px; }
+.btn-sm:active { padding: 7px 11px 5px 13px; }
+
+/* ---------- Taskbar (nav) ---------- */
+.taskbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
+  height: 46px; background: var(--grey);
+  border-top: 2px solid var(--grey-lit);
+  display: flex; align-items: center; gap: 6px; padding: 4px 6px;
+}
+.start {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--chrome-font); font-size: 14px; font-weight: 700; color: #000;
+  text-decoration: none; padding: 5px 10px 5px 6px; background: var(--grey);
+  border: 2px solid; border-color: var(--grey-lit) var(--grey-dk) var(--grey-dk) var(--grey-lit);
+  box-shadow: inset 1px 1px 0 var(--grey-soft), inset -1px -1px 0 var(--grey-mid);
+}
+.start:active, .start:focus-visible {
+  border-color: var(--grey-mid) var(--grey-lit) var(--grey-lit) var(--grey-mid);
+  box-shadow: inset 1px 1px 0 var(--grey-dk), inset -1px -1px 0 var(--grey-soft);
+}
+.start .mark {
+  width: 20px; height: 20px; background: var(--navy); color: #fff;
+  font-size: 13px; font-weight: 700; display: grid; place-items: center;
+}
+.task-links { display: flex; gap: 5px; flex: 1; }
+.task-links a {
+  font-family: var(--chrome-font); font-size: 13px; color: #000; text-decoration: none;
+  padding: 5px 12px; background: var(--grey);
+  border: 2px solid; border-color: var(--grey-lit) var(--grey-dk) var(--grey-dk) var(--grey-lit);
+}
+.task-links a:hover { background: #cacaca; }
+@media (max-width: 720px) { .task-links { display: none; } .taskbar { justify-content: space-between; } }
+
+/* ---------- Article head ---------- */
+.head { background: var(--desk); padding: 30px 0 34px; border-bottom: 2px solid #063f3f; }
+.crumbs {
+  font-family: var(--chrome-font); font-size: 12px; color: #cfe8e6; margin: 0 0 14px;
+}
+.crumbs a { color: #fff; }
+.crumbs a:hover { color: #b8e2df; }
+h1 {
+  font-family: var(--body-font);
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  line-height: 1.14; letter-spacing: -0.02em; font-weight: 700;
+  color: #fff; margin: 0 0 12px; text-wrap: balance; max-width: 22ch;
+}
+.standfirst { color: #d3ecea; margin: 0; font-size: 1.04rem; max-width: 60ch; }
+
+/* ---------- Article body ---------- */
+article { background: var(--paper); border-bottom: 1px solid #d3d5d9; padding: 40px 0 52px; }
+h2 {
+  font-size: clamp(1.3rem, 2.6vw, 1.7rem); line-height: 1.22; letter-spacing: -0.015em;
+  margin: 40px 0 10px; text-wrap: balance;
+}
+h2:first-of-type { margin-top: 0; }
+h3 { font-size: 1.06rem; margin: 26px 0 4px; }
+article p { margin: 0 0 16px; }
+article ul, article ol { margin: 0 0 18px; padding-left: 22px; }
+article li { margin-bottom: 8px; color: var(--ink-soft); }
+article li strong, article li b { color: var(--ink); }
+a { color: #0b4fa8; }
+a:hover { color: #062f66; }
+code {
+  font-family: Consolas, "Cascadia Mono", Menlo, monospace; font-size: .88em;
+  background: #eceef1; padding: 1px 5px; border: 1px solid #d7dade;
+}
+
+/* The direct answer, first thing under the headline. This is the paragraph an
+   AI overview or a search snippet is most likely to quote, so it stands alone
+   and answers the page's question in full. */
+.answer { padding: 16px 18px; margin: 0 0 34px; }
+.answer p { margin: 0; font-size: 1.05rem; }
+.answer p + p { margin-top: 12px; }
+
+.note { padding: 14px 18px; margin: 0 0 24px; font-size: .97rem; color: var(--ink-soft); }
+.note strong { color: var(--ink); }
+.note p { margin: 0; }
+.note p + p { margin-top: 10px; }
+
+/* Steps, comparison rows and FAQ share the same quiet chrome. */
+.steps { counter-reset: step; list-style: none; padding: 0; margin: 0 0 24px; }
+.steps li {
+  position: relative; padding-left: 38px; margin-bottom: 14px; color: var(--ink-soft);
+}
+.steps li::before {
+  counter-increment: step; content: counter(step);
+  position: absolute; left: 0; top: 2px;
+  font-family: var(--chrome-font); font-size: 12px; font-weight: 700; color: #fff;
+  background: var(--navy); width: 22px; height: 22px; display: grid; place-items: center;
+}
+.steps b { color: var(--ink); }
+
+.tbl { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: .96rem; }
+.tbl th, .tbl td { text-align: left; vertical-align: top; padding: 9px 12px; border: 1px solid #d3d5d9; }
+.tbl th { background: var(--grey); font-family: var(--chrome-font); font-size: 13px; }
+.tbl td { color: var(--ink-soft); }
+.tbl-scroll { overflow-x: auto; }
+
+.faq { margin: 0 0 10px; }
+.faq details { border-top: 1px solid #d3d5d9; padding: 12px 0; }
+.faq details:last-of-type { border-bottom: 1px solid #d3d5d9; }
+.faq summary {
+  cursor: pointer; font-weight: 600; list-style: none;
+  display: flex; gap: 10px; align-items: baseline;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before {
+  content: "+"; font-family: var(--chrome-font); font-weight: 700; color: var(--navy); flex: none;
+}
+.faq details[open] summary::before { content: "\2212"; }
+.faq summary:focus-visible { outline: 2px dotted #000; outline-offset: 3px; }
+.faq details p { margin: 10px 0 0 20px; color: var(--ink-soft); }
+
+.cta-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 26px 0 0; }
+.cta-meta { margin: 14px 0 0; font-family: var(--chrome-font); font-size: .84rem; color: var(--ink-soft); }
+
+/* ---------- Related + footer ---------- */
+.related { padding: 34px 0; }
+.related h2 { margin: 0 0 14px; font-size: 1.2rem; }
+.related ul { margin: 0; padding-left: 20px; }
+.related li { margin-bottom: 8px; color: var(--ink-soft); }
+.foot {
+  border-top: 1px solid #d3d5d9; padding: 24px 0 40px;
+  font-size: .9rem; color: var(--ink-soft);
+}
+.foot-row { display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.dev { color: var(--ink-soft); }
