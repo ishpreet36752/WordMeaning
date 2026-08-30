@@ -35,9 +35,11 @@ $MaxDefinitionLen = 300
 $MaxExampleLen    = 140
 $WordPattern      = "^[A-Za-z][A-Za-z'\-]{0,31}$"
 
-$staging = Join-Path $root '.staging\wordnet'
+# Forward slashes throughout: pwsh runs this on macOS too (the Mac build needs
+# the same .dat), and a backslash is an ordinary filename character there.
+$staging = Join-Path $root '.staging/wordnet'
 $dictDir = Join-Path $staging 'dict'
-$outFile = Join-Path $root 'assets\dictionary.dat'
+$outFile = Join-Path $root 'assets/dictionary.dat'
 
 # --- Fetch and unpack (cached in .staging, which is git-ignored) -------------
 if (-not (Test-Path (Join-Path $dictDir 'index.noun'))) {

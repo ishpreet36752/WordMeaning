@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Info.plist template for the .app bundle. build-mac.sh substitutes @VERSION@.
+
+  LSUIElement is the important one: WordMeaning owns a menu bar item and a
+  tooltip panel, and has no window and no Dock presence. Without it macOS would
+  give the app a Dock icon and a menu bar of its own, and clicking the popup's
+  parent app would fight the program for focus.
+
+  There is no usage-description key for Accessibility. macOS gates that through
+  TCC at runtime (AXIsProcessTrustedWithOptions), which AppDelegate asks for on
+  first launch.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>WordMeaning</string>
+    <key>CFBundleDisplayName</key>
+    <string>WordMeaning</string>
+    <key>CFBundleExecutable</key>
+    <string>WordMeaning</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.github.ishpreet36752.WordMeaning</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>@VERSION@</string>
+    <key>CFBundleVersion</key>
+    <string>@VERSION@</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSHumanReadableCopyright</key>
+    <string>MIT licence. Definitions from WordNet 3.1, Copyright 2011 by Princeton University. All rights reserved.</string>
+    <key>NSSupportsAutomaticTermination</key>
+    <false/>
+    <key>NSSupportsSuddenTermination</key>
+    <false/>
+</dict>
+</plist>
