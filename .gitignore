@@ -13,3 +13,34 @@ Desktop.ini
 # Tool and corpus download staging
 /.staging/
 .impeccable
+
+# macOS build output (produced by mac/build-mac.sh; recreate with that script).
+/mac/.build/
+/mac/dist/
+/mac/Resources/dictionary.dat
+.DS_Store
+
+# --- Not ours to publish -----------------------------------------------------
+# Reference material written by someone else. The distribution playbook this
+# repo's marketing notes are based on is Kapil's document (dissectmac.com), read
+# locally and summarised in marketing/seo-notes.md — summarising it is fair,
+# re-hosting the file in a public repo is not.
+/*.pdf
+
+# --- Local working documents -------------------------------------------------
+# Drafts, briefs and scratch plans that belong to whoever is working, not to the
+# project. Anything that should outlive a session goes in README.md, CLAUDE.md,
+# PRODUCT.md or marketing/ instead.
+/plan.md
+/wordmeaning-landing-page-brief.md
+/notes.md
+/scratch/
+/TODO.local.md
+
+# --- Tooling state -----------------------------------------------------------
+# Per-machine editor and agent settings: paths, permissions and preferences that
+# are meaningless (or wrong) on anyone else's machine.
+/.claude/settings.local.json
+/.vscode/
+/.idea/
+*.swp

@@ -1,0 +1,31 @@
+# Line endings are normalised in the repository (LF) and checked out per file
+# type. This matters now that the project builds on macOS as well: a shell
+# script with CRLF endings fails on the first line with a "bad interpreter"
+# error, and the machine that authored it is a Windows machine with
+# core.autocrlf on.
+* text=auto
+
+# Anything a Unix tool executes or parses must stay LF.
+*.sh    text eol=lf
+*.swift text eol=lf
+*.py    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.plist text eol=lf
+*.css   text eol=lf
+*.html  text eol=lf
+*.txt   text eol=lf
+*.xml   text eol=lf
+*.md    text eol=lf
+
+# PowerShell is the Windows side of the build and stays CRLF.
+*.ps1   text eol=crlf
+*.iss   text eol=crlf
+*.ahk   text eol=crlf
+
+# Binary assets: never touched.
+*.ico  binary
+*.png  binary
+*.mp4  binary
+*.icns binary
+*.dat  binary

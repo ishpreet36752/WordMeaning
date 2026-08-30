@@ -16,6 +16,8 @@ Their moment of doubt is the download, not the product: an unsigned `.exe`, from
 
 WordMeaning is a system-wide single-word definition popup for Windows. Select a word in any app — browser, PDF reader, Word — and its definition appears at the cursor, then disappears on its own.
 
+A native macOS build exists in `mac/` and is not shipped yet: it is compiled and unit-tested in CI but has never run on real hardware. Until it has, Windows is what the site and every listing claim, because it is what is true.
+
 It exists because looking up a word costs more attention than the lookup is worth: copy, switch app, paste, search, scan, come back, find your place again. WordMeaning collapses that to one gesture.
 
 Success looks like someone installing it, forgetting it is running, and simply no longer opening dictionary tabs.

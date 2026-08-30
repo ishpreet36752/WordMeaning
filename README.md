@@ -22,6 +22,7 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 
 - [Features](#features)
 - [Download & install](#download--install)
+- [macOS (preview)](#macos-preview)
 - [Run from source (developers)](#run-from-source-developers)
 - [Usage](#usage)
 - [Start automatically with Windows](#start-automatically-with-windows)
@@ -52,6 +53,12 @@ Reading an article, a PDF, or a document and hit a word you don't know? Instead 
 
 Both downloads live on the site, and you can try the actual interaction there before installing anything.
 
+Longer answers to the questions people usually ask first:
+[the offline dictionary](https://ishpreet36752.github.io/WordMeaning/offline-dictionary-windows.html) ·
+[reading without tab switches](https://ishpreet36752.github.io/WordMeaning/look-up-words-while-reading.html) ·
+[word lookup inside PDFs](https://ishpreet36752.github.io/WordMeaning/dictionary-popup-for-pdf-windows.html) ·
+[how it compares, including where it loses](https://ishpreet36752.github.io/WordMeaning/dictionary-popup-alternatives-windows.html)
+
 **Requirements:** Windows 10 or 11. **No internet connection** — the dictionary is bundled. **No AutoHotkey install needed** — everything is in the download.
 
 | | |
@@ -74,6 +81,45 @@ gh attestation verify WordMeaning.exe --repo ishpreet36752/WordMeaning
 That fails unless the exact bytes you have came out of that workflow, from this repository. Every release also carries a `SHA256SUMS.txt`.
 
 Nothing compiled is committed to this repository — the binaries exist only as release artifacts, and the bundled dictionary is [generated](scripts/build-dictionary.ps1) from a checksum-pinned WordNet release rather than checked in.
+
+## macOS (preview)
+
+A native Mac build lives in [`mac/`](mac/): a Swift menu bar app with the same gesture, the same
+bundled WordNet dictionary and the same rules about what it stores (nothing).
+
+> [!WARNING]
+> **It has never been run on a real Mac.** It is compiled and unit-tested by CI on every push, and the
+> release workflow produces a signed, universal `.app`, but the parts that need actual hardware — the
+> event monitors, reading the selection, the popup, the permission prompt — are unverified. If you try
+> it, [say what happened](https://github.com/ishpreet36752/WordMeaning/issues); that is what it needs
+> most.
+
+**Requirements:** macOS 13 (Ventura) or later, Apple Silicon or Intel.
+
+1. Download `WordMeaning-macOS.dmg` from the [latest release](https://github.com/ishpreet36752/WordMeaning/releases/latest), open it, and drag **WordMeaning** to Applications.
+2. The first launch is blocked, because the app is not signed with a paid Apple Developer ID:
+   **right-click the app → Open → Open**. (Equivalently: `xattr -d com.apple.quarantine /Applications/WordMeaning.app`.)
+3. macOS asks for **Accessibility** access. Grant it in *System Settings → Privacy & Security →
+   Accessibility*. Nothing can read a selection in another app without it — the app waits, and starts
+   watching the moment you switch it on.
+4. Select a word anywhere. The definition appears at the cursor and leaves after six seconds.
+
+Differences from the Windows build, all forced by the platform:
+
+| | Windows | macOS |
+|---|---|---|
+| Reads the selection by | Ctrl+C probe, clipboard restored | Accessibility API (no clipboard touched); Cmd+C probe only where that fails |
+| Web search on a miss | Ctrl+Shift+D | ⌘⇧D |
+| Auto-start | per-user registry Run key | Login Item (`SMAppService`) |
+| First-launch warning | SmartScreen: *More info → Run anyway* | Gatekeeper: right-click → *Open* |
+
+Build it yourself:
+
+```bash
+pwsh ./scripts/build-dictionary.ps1   # the same generator, run by pwsh on macOS
+swift test  --package-path mac        # dictionary, sense selection, wrapping
+./mac/build-mac.sh 1.0.0              # -> mac/dist/WordMeaning.app and .dmg
+```
 
 ## Run from source (developers)
 
@@ -210,6 +256,7 @@ Please [open a bug report](https://github.com/ishpreet36752/WordMeaning/issues/n
 - **Single words only** — no phrases or idioms.
 - **Scanned/image PDFs** aren't supported (no text to select).
 - Password fields and other non-copyable UI text are silently skipped.
+- **macOS is a preview** — built and unit-tested in CI, never yet run on real hardware. Linux has no build.
 
 ## Contributing
 
