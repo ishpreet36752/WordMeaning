@@ -26,7 +26,7 @@ permissions:
 
 jobs:
   build:
-    name: Build, attest, publish
+    name: Windows — build, attest, publish
     runs-on: windows-latest
 
     steps:
@@ -184,3 +184,93 @@ jobs:
               dist/WordMeaning-Setup.exe dist/WordMeaning.exe dist/SHA256SUMS.txt
           }
           if ($LASTEXITCODE -ne 0) { Write-Error "Publishing to the release failed."; exit 1 }
+
+  macos:
+    name: macOS — build, attest, publish
+    runs-on: macos-14
+    # The Windows job creates the release; this one adds its assets to it, so a
+    # tag never produces two releases racing to exist.
+    needs: build
+
+    # Hoisted here because a step's `if:` can read env but not secrets. Absent
+    # secrets are empty strings, which is exactly the unsigned path.
+    env:
+      APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+      CODESIGN_IDENTITY: ${{ secrets.APPLE_CODESIGN_IDENTITY }}
+      NOTARY_APPLE_ID: ${{ secrets.APPLE_NOTARY_ID }}
+      NOTARY_PASSWORD: ${{ secrets.APPLE_NOTARY_PASSWORD }}
+      NOTARY_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache the WordNet download
+        uses: actions/cache@v4
+        with:
+          path: .staging/wordnet
+          key: wordnet-${{ hashFiles('scripts/build-dictionary.ps1') }}
+
+      - name: Build the bundled dictionary
+        shell: pwsh
+        run: ./scripts/build-dictionary.ps1
+
+      # A release must not be cut from a commit that fails the suite.
+      - name: Run tests
+        run: swift test --package-path mac
+
+      # The same script a maintainer runs locally — no separate release build.
+      #
+      # Signing: with APPLE_CODESIGN_* secrets present the app is signed with a
+      # Developer ID and notarized, and it opens with a plain double-click. With
+      # them absent the build still succeeds, ad-hoc signed, and the download
+      # needs the right-click → Open dance documented in the README. Adding the
+      # secrets later changes nothing else here.
+      - name: Import the Developer ID certificate
+        if: env.APPLE_CERTIFICATE_P12 != ''
+        run: |
+          set -euo pipefail
+          KEYCHAIN="$RUNNER_TEMP/build.keychain"
+          PASSWORD="$(uuidgen)"
+          security create-keychain -p "$PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 900 "$KEYCHAIN"
+          security unlock-keychain -p "$PASSWORD" "$KEYCHAIN"
+          echo "$APPLE_CERTIFICATE_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN" -P "$APPLE_CERTIFICATE_PASSWORD"             -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$RUNNER_TEMP/cert.p12"
+
+      - name: Build the app and the disk image
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          if [ "$version" = "$GITHUB_REF_NAME" ]; then version="0.0.0-dev"; fi
+          bash mac/build-mac.sh "$version"
+          mv mac/dist/WordMeaning.dmg "mac/dist/WordMeaning-macOS.dmg"
+          shasum -a 256 mac/dist/WordMeaning-macOS.dmg | sed 's| .*/| |'             > mac/dist/SHA256SUMS-macOS.txt
+          cat mac/dist/SHA256SUMS-macOS.txt
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: mac/dist/WordMeaning-macOS.dmg
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: WordMeaning-macOS
+          path: |
+            mac/dist/WordMeaning-macOS.dmg
+            mac/dist/SHA256SUMS-macOS.txt
+          if-no-files-found: error
+
+      - name: Publish to the GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # A fresh tag per release: uploading over an existing asset with
+          # --clobber deletes it and resets its download counter to zero.
+          gh release upload "$GITHUB_REF_NAME"             mac/dist/WordMeaning-macOS.dmg mac/dist/SHA256SUMS-macOS.txt

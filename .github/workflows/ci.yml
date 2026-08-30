@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  loadtest:
-    name: Load test (all modules initialize)
+  windows:
+    name: Windows (AutoHotkey suite)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,3 +79,48 @@ jobs:
               exit 1
             }
           }
+
+  macos:
+    name: macOS (Swift build + suite)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same pinned corpus as the Windows job. pwsh ships on the macOS runners,
+      # so the one generator serves both platforms rather than being ported.
+      - name: Cache the WordNet download
+        uses: actions/cache@v4
+        with:
+          path: .staging/wordnet
+          key: wordnet-${{ hashFiles('scripts/build-dictionary.ps1') }}
+
+      - name: Build the bundled dictionary
+        shell: pwsh
+        run: ./scripts/build-dictionary.ps1
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Build
+        run: swift build --package-path mac -c debug
+
+      # The tests read assets/dictionary.dat straight from the checkout; the .app
+      # bundle path is exercised by the release build instead.
+      - name: Test
+        run: swift test --package-path mac
+
+      # Proves the thing a download actually runs: a real .app bundle, universal,
+      # signed at least ad-hoc, with the dictionary inside it.
+      - name: Assemble the app bundle
+        run: bash mac/build-mac.sh 0.0.0-ci
+
+      - name: Check the bundle carries its dictionary
+        run: |
+          set -e
+          app="mac/dist/WordMeaning.app"
+          test -f "$app/Contents/MacOS/WordMeaning"
+          test -f "$app/Contents/Resources/dictionary.dat"
+          test -f "$app/Contents/Resources/AppIcon.icns"
+          /usr/libexec/PlistBuddy -c "Print :LSUIElement" "$app/Contents/Info.plist"
+          codesign --verify --strict --verbose=2 "$app"
+          lipo -archs "$app/Contents/MacOS/WordMeaning"
