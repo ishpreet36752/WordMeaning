@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # Lets a branch be built and tested before it is proposed — the Swift port
+  # cannot be compiled on the Windows machine it was written on, so "does it
+  # build" has to be answerable without opening a pull request first.
+  workflow_dispatch:
 
 jobs:
   windows:
